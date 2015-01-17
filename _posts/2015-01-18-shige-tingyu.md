@@ -1,0 +1,23 @@
+---
+layout: page
+title: 听雨
+tagline: Supporting tagline
+tags: 诗歌
+---
+{% include JB/setup %}
+
+窗外的雨很轻  
+像极日子  
+
+躲在被子里听  
+点点滴滴  
+
+日子也很轻  
+像窗外的雨  
+
+藏在时间里  
+藏在时间里听雨  
+
+滴答，滴答  
+——滴答，滴答  
+我听见了自己  

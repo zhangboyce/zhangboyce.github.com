@@ -1,0 +1,17 @@
+---
+layout: page
+title: 母亲的白发
+tagline: Supporting tagline
+tags: 诗歌
+---
+{% include JB/setup %}
+
+清晨  
+我依着门框看太阳升起  
+
+母亲在园子里摘菜  
+腰弯进了地里  
+
+土墙上的一藤牵牛花，翻过篱笆  
+爬上了母亲的头发  
+
