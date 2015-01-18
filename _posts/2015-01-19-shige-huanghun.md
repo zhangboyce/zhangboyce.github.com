@@ -1,0 +1,19 @@
+---
+layout: page
+title: 黄昏
+tagline: Supporting tagline
+tags: 诗歌
+---
+{% include JB/setup %}
+风  
+赶着几声鸟鸣回了山  
+几处细长的炊烟  
+支起了整个村庄的傍晚  
+
+两声清脆的狗吠  
+倒挂在晚霞中  
+比飘落在山边的红绸缎  
+更轻，更远  
+
+<hr/> 
+2013.8.7
