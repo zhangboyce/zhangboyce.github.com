@@ -1,5 +1,5 @@
 ---
-layout: page
+layout: post
 title: 影评：陈凯歌《和你在一起》
 tagline: Supporting tagline
 tags: 影评

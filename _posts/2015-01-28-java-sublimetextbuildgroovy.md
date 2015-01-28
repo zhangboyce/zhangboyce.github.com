@@ -1,5 +1,5 @@
 ---
-layout: page
+layout: post
 title: 在Sublime Text客户端编译运行Groovy代码
 tagline: Supporting tagline
 excerpt: ""

@@ -1,5 +1,5 @@
 ---
-layout: page
+layout: post
 title: 换个角度理解java的ThreadLocal 
 tagline: Supporting tagline
 excerpt: ""

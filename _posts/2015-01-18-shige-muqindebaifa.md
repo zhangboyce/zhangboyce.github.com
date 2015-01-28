@@ -1,5 +1,5 @@
 ---
-layout: page
+layout: post
 title: 母亲的白发
 tagline: Supporting tagline
 tags: 诗歌

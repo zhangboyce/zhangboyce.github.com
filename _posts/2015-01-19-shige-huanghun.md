@@ -1,5 +1,5 @@
 ---
-layout: page
+layout: post
 title: 黄昏
 tagline: Supporting tagline
 tags: 诗歌

@@ -1,5 +1,5 @@
 ---
-layout: page
+layout: post
 title: 听雨
 tagline: Supporting tagline
 tags: 诗歌
