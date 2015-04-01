@@ -1,10 +1,7 @@
 ---
 layout: post
 title: 影评：陈凯歌《和你在一起》
-tagline: Supporting tagline
-tags: 影评
 ---
-{% include JB/setup %}
 
 &nbsp;&nbsp;&nbsp;&nbsp;《和你在一起》是一部陈凯歌早期拍摄的文艺作品。初次看到这部影片题目
 的时候，我还以为是一部爱情电影，类似于韩剧的爱情电影，所以就没大留心，也不准备看它。可是看到网友

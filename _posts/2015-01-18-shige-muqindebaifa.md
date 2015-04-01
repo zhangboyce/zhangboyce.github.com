@@ -1,10 +1,7 @@
 ---
 layout: post
 title: 母亲的白发
-tagline: Supporting tagline
-tags: 诗歌
 ---
-{% include JB/setup %}
 
 清晨  
 我依着门框看太阳升起  

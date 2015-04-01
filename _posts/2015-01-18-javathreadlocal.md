@@ -1,12 +1,7 @@
 ---
 layout: post
 title: 换个角度理解java的ThreadLocal 
-tagline: Supporting tagline
-excerpt: ""
-tags: Java
 ---
-
-{% include JB/setup %}
 
 &nbsp;&nbsp;&nbsp;&nbsp;关于Java的ThreadLocal网上有大量的文章在谈这个问题，
 为什么这个东西大家说来说去乐此不疲呢，大约是因为它本身的神秘性，经常出现在一些框架中，

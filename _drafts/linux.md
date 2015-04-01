@@ -1,1 +1,0 @@
-scp -P 58404 crawler-jobsubmit-client.jar master@172.16.141.186:~/schedule-job/

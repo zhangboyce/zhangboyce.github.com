@@ -1,12 +1,6 @@
 ---
-layout: post
 title: 在Sublime Text客户端编译运行Groovy代码
-tagline: Supporting tagline
-excerpt: ""
-tags: Java
 ---
-
-{% include JB/setup %}
 
 #### 1. 手动安装Groovy
 * [下载](http://groovy.codehaus.org/Download)一个Groovy的二进制发布包并解压到本地目录中。

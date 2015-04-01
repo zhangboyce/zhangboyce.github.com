@@ -1,10 +1,6 @@
 ---
-layout: post
 title: 听雨
-tagline: Supporting tagline
-tags: 诗歌
 ---
-{% include JB/setup %}
 
 窗外的雨很轻  
 像极日子  

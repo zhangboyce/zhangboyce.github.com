@@ -1,10 +1,8 @@
 ---
 layout: post
 title: 黄昏
-tagline: Supporting tagline
-tags: 诗歌
 ---
-{% include JB/setup %}
+
 风  
 赶着几声鸟鸣回了山  
 几处细长的炊烟  
