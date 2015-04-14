@@ -10,7 +10,7 @@ title: 换个角度理解java的ThreadLocal
 有很多写的非常好的，我只是想从另外一个角度去认识ThreadLocal。 
 
 &nbsp;&nbsp;&nbsp;&nbsp;ThreadLocal被翻译成“线程本地变量”，从名字上讲首先它是“变量”，
-那么，我们就来看看Java中的各种变量。 
+那么，我们就来看看Java中的各种变量。
 
 #### 一、局部变量 
 
