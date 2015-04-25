@@ -64,7 +64,7 @@ public class InputStreamCacher {
 			logger.error(e.getMessage(), e);
 		}  
 	}
-	
+
 	public InputStream getInputStream() {
 		if (ObjectUtils.isNull(byteArrayOutputStream))
 			return null;

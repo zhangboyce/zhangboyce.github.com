@@ -1,7 +1,7 @@
 # Site settings
 title: Boyce's Blog
 description: "A minimal blog template, build with Jekyll."
-url: "http://www.jacoporabolini.com/emerald"
+url: ""
 author:
   name: "Boyce Zhang"
   url: "https://github.com/zhangboyce"
