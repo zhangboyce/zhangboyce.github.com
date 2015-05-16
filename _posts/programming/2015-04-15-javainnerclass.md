@@ -4,7 +4,8 @@ title: 诡异的Java匿名内部类写法
 ---
 
 在很多时候，我们需要在类的内部初始化一个静态的Map或者List，然后保存一下常量值提供给类内部方法使用。    
-我们通常的做法是：    
+我们通常的做法是：  
+<!-- more -->  
 首先初始化一个Map的静态变量，然后在静态块添加常量值：
 {% highlight java %}
 private final static Map<String, String> CONSTANT = new HashMap<String, String>();

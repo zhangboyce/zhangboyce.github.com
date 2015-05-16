@@ -3,7 +3,8 @@ layout: post
 title: 重复读取InputStream的方法
 ---
 
-在有的场合中，我们需要重复利用InputStream的数据，比如：    
+在有的场合中，我们需要重复利用InputStream的数据，比如： 
+<!-- more -->   
 
 * 一个office word文件流，我需要首先读取InputStream中的前一些字节来判断word文件的实际内容（word文件可以保存html，mht的内容）。然后再根据实际内容决定我要解析InputStream的方式。
 * 一个Html文件流，我需要首先读取InputStream中的一些字节来判断Html文件编码方式。然后再根据html文件编码方式读取Html内容。

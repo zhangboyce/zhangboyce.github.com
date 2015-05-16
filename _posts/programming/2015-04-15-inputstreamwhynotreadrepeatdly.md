@@ -7,6 +7,7 @@ title: InputStream为什么不能被重复读取？
 但是有不少同学问我，为什么Stream不能重复被读取。
 为了理解InputStream为什么不能被重复读取，我们把InputStream的读取和List的遍历做一个
 比较，情况可能就比较清楚了。 
+<!-- more -->
 
 #### 一、 List 为什么能够重复遍历？
 

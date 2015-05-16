@@ -3,13 +3,14 @@ layout: post
 title: 换个角度理解java的ThreadLocal 
 ---
 
-&nbsp;&nbsp;&nbsp;&nbsp;关于Java的ThreadLocal网上有大量的文章在谈这个问题，
+关于Java的ThreadLocal网上有大量的文章在谈这个问题，
 为什么这个东西大家说来说去乐此不疲呢，大约是因为它本身的神秘性，经常出现在一些框架中，
 但是自己又很少用。亦或是因为大家本身对它的理解各有偏颇，所以成了大家热议的话题。 
+<!-- more -->
 我对ThreadLocal的理解也不深，这篇文章也不会去做什么深层次的研究，对源码分析的文章也
 有很多写的非常好的，我只是想从另外一个角度去认识ThreadLocal。 
 
-&nbsp;&nbsp;&nbsp;&nbsp;ThreadLocal被翻译成“线程本地变量”，从名字上讲首先它是“变量”，
+ThreadLocal被翻译成“线程本地变量”，从名字上讲首先它是“变量”，
 那么，我们就来看看Java中的各种变量。
 
 #### 一、局部变量 
@@ -36,7 +37,7 @@ public void method2() {
 }  
 {% endhighlight %}
 
-&nbsp;&nbsp;&nbsp;&nbsp;同一个类中的method1和method2中都可以定义一个名为a的变量，
+同一个类中的method1和method2中都可以定义一个名为a的变量，
 同样method1中的for代码块，if代码块和{}代码块中都可以定义名为i的变量。
 它们的作用域都在方法内部或者代码块内部。 
 
