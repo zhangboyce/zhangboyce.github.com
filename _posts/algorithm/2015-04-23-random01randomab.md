@@ -1,4 +1,5 @@
 ---
+categories: algorithms
 layout: post
 title: 一个随机数算法的解答与分析
 ---

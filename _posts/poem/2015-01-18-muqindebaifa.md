@@ -1,4 +1,5 @@
 ---
+categories: poem
 layout: post
 title: 母亲的白发
 ---

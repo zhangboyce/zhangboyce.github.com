@@ -11,7 +11,8 @@ baseurl: / #Change this to your relative path (ex: /blog/), or leave just a /
 markdown: kramdown
 source: .
 destination: ./_site
-permalink: /:title
+permalink: /:categories/:year/:month/:day/:title/
+gems: [jekyll-paginate]
 paginate: 8
 paginate_path: /page:num/
 

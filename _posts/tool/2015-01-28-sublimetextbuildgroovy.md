@@ -1,4 +1,6 @@
 ---
+categories: tool
+layout: post
 title: 在Sublime Text客户端编译运行Groovy代码
 ---
 
