@@ -106,27 +106,3 @@ for (; r < size; r++)
         elementData[w++] = elementData[r];
 {%endhighlight%}
 所以retainAll的最坏情况是两个List没有交集，时间复杂度为O(n\*n)，所以计算一个k-候选项集的支持度的最坏时间复杂度为**O(n\*n)**，其中n是事务总数。
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

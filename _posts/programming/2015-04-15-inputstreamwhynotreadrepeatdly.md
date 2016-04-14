@@ -1,4 +1,5 @@
 ---
+categories: programming
 layout: post
 title: InputStream为什么不能被重复读取？
 ---

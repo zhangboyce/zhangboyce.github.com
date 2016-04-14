@@ -13,7 +13,7 @@ source: .
 destination: ./_site
 permalink: /:categories/:year/:month/:day/:title/
 gems: [jekyll-paginate]
-paginate: 8
+paginate: 10
 paginate_path: /page:num/
 
 # Default values

@@ -59,6 +59,15 @@ nav.menu-open {
   height: 24px;
 }
 
+#nav-rss {
+  display: block;
+  position: absolute;
+  top: 75px;
+  right: 25px;
+  z-index: 10;
+  height: 24px;
+}
+
 /* Icon menu */
 
 #menu {

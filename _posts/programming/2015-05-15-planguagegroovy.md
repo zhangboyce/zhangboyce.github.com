@@ -1,4 +1,5 @@
 ---
+categories: programming
 layout: post
 title: 从Groovy角度总结计算机语言分类（编译型、解释型；动态类型、静态类型；强类型、弱类型）
 ---

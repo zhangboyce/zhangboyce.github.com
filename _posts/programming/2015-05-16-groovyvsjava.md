@@ -1,4 +1,5 @@
 ---
+categories: programming
 layout: post
 title: 让你迷惑的Groovy代码
 ---

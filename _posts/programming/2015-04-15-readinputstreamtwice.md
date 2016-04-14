@@ -1,4 +1,5 @@
 ---
+categories: programming
 layout: post
 title: 重复读取InputStream的方法
 ---

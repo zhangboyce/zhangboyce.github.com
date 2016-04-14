@@ -1,6 +1,7 @@
 ---
+categories: programming
 layout: post
-title: 换个角度理解java的ThreadLocal 
+title: 换个角度理解java的ThreadLocal
 ---
 
 关于Java的ThreadLocal网上有大量的文章在谈这个问题，

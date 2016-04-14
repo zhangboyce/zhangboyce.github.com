@@ -1,4 +1,5 @@
 ---
+categories: programming
 layout: post
 title: Java程序设计，你属于哪一流派？
 ---

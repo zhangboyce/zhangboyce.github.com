@@ -1,4 +1,5 @@
 ---
+categories: programming
 layout: post
 title: 诡异的Java匿名内部类写法
 ---

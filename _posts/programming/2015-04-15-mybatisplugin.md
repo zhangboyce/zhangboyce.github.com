@@ -1,4 +1,5 @@
 ---
+categories: programming
 layout: post
 title: 由浅入深分析mybatis通过动态代理实现拦截器（插件）的原理
 ---

@@ -1,4 +1,5 @@
 ---
+categories: programming
 layout: post
 title: Javascript 中的返回函数和闭包
 ---

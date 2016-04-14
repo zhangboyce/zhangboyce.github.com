@@ -1,4 +1,5 @@
 ---
+categories: programming
 layout: post
 title: Groovy中，闭包还是方法？
 ---
