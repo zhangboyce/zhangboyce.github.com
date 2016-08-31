@@ -141,7 +141,7 @@ nav.menu-open {
   &:after {
   	display: block;
     content: '';
-    width: 5rem;
+    width: 100%;
     height: 1px;
     margin: 23px auto;
     background-color: lighten($text-color, 70%);
@@ -149,6 +149,22 @@ nav.menu-open {
 }
 
 /* Posts */
+
+#post-page {
+  margin-bottom: 1.5em;
+  @media (min-width: 940px) {
+      margin-bottom: 1.3334em;
+    }
+}
+
+.post+.post:before {
+    display: block;
+    content: '';
+    width: 5rem;
+    height: 1px;
+    margin: 23px auto;
+    background-color: lighten($text-color, 70%);
+  }
 
 .by-line {
   display: block;
