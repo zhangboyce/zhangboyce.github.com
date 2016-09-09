@@ -1,7 +1,7 @@
 ---
 categories: javascript
 layout: post
-title: JavaScript 变量作用域问题
+title: JavaScript-变量作用域问题
 ---
 
 #### 一、 ES6之前，函数是唯一提供局部变量作用域的地方

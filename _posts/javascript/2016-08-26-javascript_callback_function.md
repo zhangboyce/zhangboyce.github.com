@@ -1,7 +1,7 @@
 ---
 categories: javascript
 layout: post
-title: JavaScript callback function 的本质
+title: JavaScript-callback function 的本质
 ---
 
 关于JavaScript callback function其实没有什么好说的，但是看到网上大量文章还在乐此不疲的讨论，关键很多文章都没有说到本质，有的甚至把回调和异步什么的强行扯上关系，让本来就不理解回调的懵逼少年情何以堪。

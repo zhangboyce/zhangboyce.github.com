@@ -1,7 +1,7 @@
 ---
 categories: javascript
 layout: post
-title: JavaScript Closure 的本质
+title: JavaScript-Closure 的本质
 ---
 
 关于JavaScript Closure其实就一句话可以解释：
