@@ -4,9 +4,9 @@ layout: post
 title: JavaScript-值与对象
 ---
 
-众所周知，JavaScript语言是随着Web时代的兴起而产生的，最开始是专门为了浏览器端而设计，现在随着Node的兴起，JavaScript语言开始在服务器端大展拳脚。JavaScript设计的时候Java面向对象的思想正风靡整个互联网，以至于JavaScript的名字都要起的感觉和Java有半毛钱关系似得，在这种面向对象的思想的影响下，JavaScript也被设计成一门面向对象的语言，乃至更加“面向对象”。
+众所周知，Js语言是随着Web时代的兴起而产生的，最开始是专门为了浏览器端而设计，现在随着Node的兴起，Js语言开始在服务器端大展拳脚。Js设计的时候Java面向对象的思想正风靡整个互联网，以至于Js的名字都要起的感觉和Java有半毛钱关系似得，在这种面向对象的思想的影响下，Js也被设计成一门面向对象的语言，乃至更加“面向对象”。
 
-#### 一、在JavaScript中，一切都是值
+#### 一、在Js中，一切都是值
 在程序语言的世界里，什么是值？值就是数据。
  
 > 程序语言都可以被看作是数据加结构的组合，结构是逻辑、是运算、是程序的框架、是不变的部分；数据是值、是变化的部分。
@@ -14,7 +14,7 @@ title: JavaScript-值与对象
 
 举例说明，在Java中，Class就是结构，Class的实例就是值，实例的方法就是结构，方法的参数，局部变量等就是值。只有值才能被方法返回，才能被当做参数，才能被赋予给其他变量，赋值赋值就是这个意思。    
 
-那么，在JavaScript的世界里面，一切都是值是什么意思？就是一切的东西都可以被当做值赋给其他变量，当做方法参数，当做方法返回值，包括方法本身。
+那么，在Js的世界里面，一切都是值是什么意思？就是一切的东西都可以被当做值赋给其他变量，当做方法参数，当做方法返回值，包括方法本身。
 
 {% highlight javascript %}
 let n = 1;
@@ -27,7 +27,7 @@ let a = [1, 2, 3];
 let r = /.*/gi;
 {% endhighlight %}
 
-那么在JavaScript里面是不是就没有结构了？当然不是，在JavaScript中有且仅有一个结构，那就是function，所以说function既是值也是结构，所以在JavaScript中结构也可以被当做参数，返回值，赋值给其他变量。正是因为JavaScript这一神奇的特性，才会让这门语言产生很多灵活的、强大的特性。
+那么在Js里面是不是就没有结构了？当然不是，在Js中有且仅有一个结构，那就是function，所以说function既是值也是结构，所以在Js中结构也可以被当做参数，返回值，赋值给其他变量。正是因为Js这一神奇的特性，才会让这门语言产生很多灵活的、强大的特性。
 
 {% highlight javascript %}
 // structure is a value
@@ -54,11 +54,11 @@ function count() {
 {% endhighlight %}
 
 #### 二、除了undefined和null之外，所有的值都是由function构造的
-在JavaScript里面，由语言本身定义的7种基本类型的值：
+在Js里面，由语言本身定义的7种基本类型的值：
 
 > number、string、boolean、object、function、undefined和null（由于undefined和null比较特殊，以下所说的基本类型默认不包括这俩货）。
 
-基本类型可以理解为值的基本单元，其他的一切类型的值都是而且只能是由基本类型组成的。JavaScript也有很多内置的对象，注意内置和基本是不一样的。    
+基本类型可以理解为值的基本单元，其他的一切类型的值都是而且只能是由基本类型组成的。Js也有很多内置的对象，注意内置和基本是不一样的。    
 
 **所有的值都是由function构建，包括基本类型。**    
 
@@ -101,7 +101,7 @@ function F() {
 let o = new F();
 {% endhighlight %}
 
-那么在JavaScript中既然没有Class的概念，那么new是什么意思呢，new其实就是调用这个方法并返回一个object，比普通的调用多做了一些事情。    
+那么在Js中既然没有Class的概念，那么new是什么意思呢，new其实就是调用这个方法并返回一个object，比普通的调用多做了一些事情。    
 
 #### 三、new的方式调用function和直接调用的区别
 任何的function都可以通过new的方式调用，也可以直接调用，先看直接调用的方式：
@@ -139,7 +139,7 @@ function _new(f) {
     return o;
 }
 {% endhighlight %}
-那么问题来了，既然如此，为什么JavaScript里面所有值都需要由function产生呢？为什么所有的值都需要用new的方式调用一个function，然后返回一个对象？为什么不直接通过JavaScript的字面量的方式直接创建对象呢？
+那么问题来了，既然如此，为什么Js里面所有值都需要由function产生呢？为什么所有的值都需要用new的方式调用一个function，然后返回一个对象？为什么不直接通过Js的字面量的方式直接创建对象呢？
 {% highlight javascript %}
 function F() {
     this.name = 'boyce';
@@ -149,7 +149,7 @@ let o2 = {
     name: 'boyce';
 };
 {% endhighlight %}
-这个问题就涉及到另一个在JavaScript里面比较难理解的话题：[原型与继承](javascript/2016/09/07/javascript_prototype/)。
+这个问题就涉及到另一个在Js里面比较难理解的话题：[原型与继承](javascript/2016/09/07/javascript_prototype/)。
 
 
 

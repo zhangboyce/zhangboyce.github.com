@@ -4,11 +4,11 @@ layout: post
 title: JavaScript-Object property's properties
 ---
 
-我们知道在JavaScript语言中，定义了7中基本类型的数据，number、string、boolean、object、function和undefined，每一种数据类型的值都是有function构建而来，而function本身呢也是一种数据，是由Function function构建而来。这样呢就形成了语言的逻辑自洽。    
+我们知道在Js语言中，定义了7中基本类型的数据，number、string、boolean、object、function和undefined，每一种数据类型的值都是有function构建而来，而function本身呢也是一种数据，是由Function function构建而来。这样呢就形成了语言的逻辑自洽。    
 
-这篇文章主要讨论object的数据类型，object类型的数据都是有Object function构建而来，是JavaScript中主要的数据类型之一。
+这篇文章主要讨论object的数据类型，object类型的数据都是有Object function构建而来，是Js中主要的数据类型之一。
 
-JavaScript的object数据令人着迷的地方就是它非常的灵活易用，你可以很简单的定义一个object，然后添加property，修改property，甚至删除property。
+Js的object数据令人着迷的地方就是它非常的灵活易用，你可以很简单的定义一个object，然后添加property，修改property，甚至删除property。
 
 {% highlight javascript %}
 let obj = {name: 'boyce'};
@@ -23,7 +23,7 @@ delete obj.age;
 obj.say(); // everybody is undefined
 {% endhighlight %}
 
-JavaScript也提供了一些方法很方便的访问object的属性名字。
+Js也提供了一些方法很方便的访问object的属性名字。
 
 {% highlight javascript %}
 let obj = {
@@ -59,7 +59,7 @@ let obj = {
 {% endhighlight %}
 
 那么什么是 enumerable property呢？一般情况下，我们自己通过字面量的方式为object添加的每一个property都是enumerable property，
-JavaScript也提供了怎么定义一个unenumerable property的方法。
+Js也提供了怎么定义一个unenumerable property的方法。
 
 {% highlight javascript %}
 let obj = {
@@ -72,7 +72,7 @@ Object.defineProperty(obj, 'say', {enumerable: false}); // unenumerable property
 
 关于Object.defineProperty 详细API说明可以看[参考文档](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty)。   
 
-总的来讲呢，就是JavaScript的object property是非常灵活的能被遍历，访问的。JavaScript也提供了好用的API方便设置property的属性。
+总的来讲呢，就是Js的object property是非常灵活的能被遍历，访问的。Js也提供了好用的API方便设置property的属性。
 
 
 

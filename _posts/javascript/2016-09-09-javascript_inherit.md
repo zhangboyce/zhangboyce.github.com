@@ -4,16 +4,16 @@ layout: post
 title: JavaScript-难道这都算继承？
 ---
 
-网上充斥着各种关于JavaScript的继承的文章，一看标题大约都是“JavaScript继承的5种方式、8种办法”，当然总结得也很好，只是有些地方个人觉得有凑数的嫌疑，仔细分析似乎有些牵强附会的意思。这篇文章就通过原型的角度重新讲讲到底什么才是JavaScript的继承，如果你对JavaScript的原型还不是很熟悉，请[移步](/javascript/2016/09/07/javascript_prototype/)。
+网上充斥着各种关于Js的继承的文章，一看标题大约都是“Js继承的5种方式、8种办法”，当然总结得也很好，只是有些地方个人觉得有凑数的嫌疑，仔细分析似乎有些牵强附会的意思。这篇文章就通过原型的角度重新讲讲到底什么才是Js的继承，如果你对Js的原型还不是很熟悉，请[移步](/javascript/2016/09/07/javascript_prototype/)。
 
 #### 一、什么情况才算是子继承了父？
 继承，在现实生活中是富二代发家致富的必备手段，在我们程序语言的世界里面同样也是程序“发家致富”的手段。顾名思义，继承就是“把你的东西给我”，当然不能白给你，除非你是人家儿子，或者你认人家当干爹，总之，就是继承了之后你和被继承者之间有一定的继承关系。    
 
-这种继承关系在JavaScript语言中怎么判断？怎么才知道我是不是继承的你？讨论这个之前，先了解一个关键字：**instanceof**。    
+这种继承关系在Js语言中怎么判断？怎么才知道我是不是继承的你？讨论这个之前，先了解一个关键字：**instanceof**。    
 
 > instanceof用来判断某个function的prototype属性是否存在于另外一个对象的原型链上。
 
-什么意思？某个function的prototype属性存在另外一个对象的原型链上意味着什么？通过[这篇讨论](/javascript/2016/09/08/javascript_value/)我们知道，在JavaScript中，所有的值都是由function构建而来，再通过[这篇讨论](/javascript/2016/09/07/javascript_prototype/)我们又知道，function的prototype属性是提供给由它所构建的值的__proto__属性引用的。    
+什么意思？某个function的prototype属性存在另外一个对象的原型链上意味着什么？通过[这篇讨论](/javascript/2016/09/08/javascript_value/)我们知道，在Js中，所有的值都是由function构建而来，再通过[这篇讨论](/javascript/2016/09/07/javascript_prototype/)我们又知道，function的prototype属性是提供给由它所构建的值的__proto__属性引用的。    
 
 **也就是说，某个function的prototype属性，一定存在于由它所构建的对象的原型链上，除非手动修改**
 
@@ -27,7 +27,7 @@ foo.__proto__ === Foo.prototype;
 foo instanceof Foo  === true
 {% endhighlight %}
 
-所以说，如果某个function的prototype属性存在于另外一个对象的原型链上，我们就视为这个对象是由该function构建而来，所以该对象instanceof该function。那么回答上面的问题：继承关系在JavaScript语言中怎么判断，或者说怎么体现？
+所以说，如果某个function的prototype属性存在于另外一个对象的原型链上，我们就视为这个对象是由该function构建而来，所以该对象instanceof该function。那么回答上面的问题：继承关系在Js语言中怎么判断，或者说怎么体现？
 
 > 一个对象如果是由子function构建而来，那么它一定也要被视为由父function构建而来，也就是说子function构建出来的对象一定也要 instanceof父function。
 
@@ -42,7 +42,7 @@ a.__proto__ === A.prototype;
 a instance A === true;
 {% endhighlight %}
 
-这是毋庸质疑的，是由JavaScript语言的new关键字从语言层面实现的，因为a.__proto__只能引用一个值，所以要想B.prototype存在于a的原型链上，只能是通过A.prototype.__proto__属性往下接。
+这是毋庸质疑的，是由Js语言的new关键字从语言层面实现的，因为a.__proto__只能引用一个值，所以要想B.prototype存在于a的原型链上，只能是通过A.prototype.__proto__属性往下接。
 
 {% highlight javascript %}
 A.prototype.__proto__ = B.prototype;
@@ -71,7 +71,7 @@ a instance B === true;
 a.name_a === 'name_a';
 a.name_b === 'name_b'; 
 {% endhighlight %}
-因为，B.prototype在b的原型链上，b又在a的原型链上，所以B.prototype也就在a的原型链上了，这样a不仅可以继承b的属性，也可以继承B.prototype的所有属性，实现了整个JavaScript原型继承的逻辑自洽。
+因为，B.prototype在b的原型链上，b又在a的原型链上，所以B.prototype也就在a的原型链上了，这样a不仅可以继承b的属性，也可以继承B.prototype的所有属性，实现了整个Js原型继承的逻辑自洽。
 
 也有这样做的
 {% highlight javascript %}
@@ -91,7 +91,7 @@ A.prototype.__proto__ = b; // say 方法健在，因为并没有删除A.prototyp
 {% endhighlight %}
 
 #### 二、换汤不换药的其他写法之一详解
-由于JavaScript语言的灵活性，看似可以通过各种方式实现继承，其实本质都是一样的。
+由于Js语言的灵活性，看似可以通过各种方式实现继承，其实本质都是一样的。
 
 {% highlight javascript %}
 function P() {
@@ -128,8 +128,8 @@ c.collage === 'collage';
 c.say(); // p: 18
 {% endhighlight %}
 
-上面的继承方式虽然很别扭的支持了参数，之所以别扭，是因为非要把灵活的JavaScript当作死板的Java用，或者说非要把
-基于function的JavaScript当作基于Class的Java用。当然上面的方式出了别扭还有其他更严重的问题。
+上面的继承方式虽然很别扭的支持了参数，之所以别扭，是因为非要把灵活的Js当作死板的Java用，或者说非要把
+基于function的Js当作基于Class的Java用。当然上面的方式出了别扭还有其他更严重的问题。
 
 {% highlight javascript %}
 P.prototype.hello = function() {
@@ -204,8 +204,8 @@ var p = {
 }; 
 // p是Object这个function构建而来，所以p.__proto__ == Object.prototype
 
-var c = {name:'c'}; // 同样 c.__proto__ == Object.prototype
-// 要想c继承p很简单
+// 要想c继承p很简单，修改c的__proto__属性
+var c = {name:'c'}; 
 c.__proto__ = p;
 c.hello(); // hello c
 
@@ -214,7 +214,7 @@ c instanceof p
 {% endhighlight %}
 
 #### 四、有些事，你搞着搞着就晕了
-还是那句话，由于JavaScript语言的灵活特性，你还可以想出很多所谓实现继承的方式，比如
+还是那句话，由于Js语言的灵活特性，你还可以想出很多所谓实现继承的方式，比如
 {% highlight javascript %}
 function C() {
     let p = new P(); // 把call的调用方式换成new的调用方式
@@ -234,7 +234,7 @@ function C() {
 
 无论什么方式，都没有原型继承优雅（原型就是为了继承而生的），或者说都是原型继承的变体，归根结底就是怎么复制父类属性的问题。还有就是无论什么继承都需要处理原型链，才能实现继承的逻辑自洽。    
 
-所以，请忽略其他乱七八糟的继承，你大概也不会真正用到它们，知道怎么回事就行。但是关于JavaScript的原型，一定得掌握，这可以说是JavaScript继承的本质。
+所以，请忽略其他乱七八糟的继承，你大概也不会真正用到它们，知道怎么回事就行。但是关于Js的原型，一定得掌握，这可以说是Js继承的本质。
 
 
 

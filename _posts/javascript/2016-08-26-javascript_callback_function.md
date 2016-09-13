@@ -4,7 +4,7 @@ layout: post
 title: JavaScript-callback function 的本质
 ---
 
-关于JavaScript callback function其实没有什么好说的，但是看到网上大量文章还在乐此不疲的讨论，关键很多文章都没有说到本质，有的甚至把回调和异步什么的强行扯上关系，让本来就不理解回调的懵逼少年情何以堪。
+关于Js callback function其实没有什么好说的，但是看到网上大量文章还在乐此不疲的讨论，关键很多文章都没有说到本质，有的甚至把回调和异步什么的强行扯上关系，让本来就不理解回调的懵逼少年情何以堪。
 
 #### 一、你可以这样理解回调
 
@@ -23,11 +23,11 @@ public void method(Obejct obj) {
 
 **在程序语言的世界里，方法的存在是为了代码的复用，回调只是通过方法参数将要复用的代码传递给该方法加以复用的一种方式而已。**    
 
-#### 二、JavaScript中的回调函数
+#### 二、Js中的回调函数
 
-在JavaScript的世界里，和Java有一点区别的地方在于：JavaScript中没有class的概念，function就是一个对象，可以被赋值给一个变量，可以被当做参数，可以被当成另一个function的返回值，function对象与JavaScript里面其他对象的唯一区别就是function对象是可以被执行的。   
+在Js的世界里，和Java有一点区别的地方在于：Js中没有class的概念，function就是一个对象，可以被赋值给一个变量，可以被当做参数，可以被当成另一个function的返回值，function对象与Js里面其他对象的唯一区别就是function对象是可以被执行的。   
 
-因为function就是对象，所以在JavaScript里面的回调显得更加简单：    
+因为function就是对象，所以在Js里面的回调显得更加简单：    
 {% highlight javascript %}
 function f1(callback) {
     // do someting
@@ -62,7 +62,7 @@ f1(callback);
 老师就是函数f1，学生就是回调函数callback，修改过有小题分的试卷就是参数。
 
 #### 四、回调是一种访问同级作用域变量的方式
-通过[JavaScript 变量作用域问题](/javascript/2016/08/23/javascript_var_scope/)我们可以知道，在JavaScript的世界里，父级作用域不能访问子级作用域的的局部变量，同级之间也不能相互访问，那么如果要访问同级作用域的变量怎么办呢？回调是一种方式，还是同样的栗子：
+通过[JavaScript 变量作用域问题](/javascript/2016/08/23/javascript_var_scope/)我们可以知道，在Js的世界里，父级作用域不能访问子级作用域的的局部变量，同级之间也不能相互访问，那么如果要访问同级作用域的变量怎么办呢？回调是一种方式，还是同样的栗子：
 {% highlight javascript %}
 function f1(callback) {
     var p1 = 1;
