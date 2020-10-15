@@ -1,0 +1,93 @@
+I"@+<p>由于Js的灵活以及它和其他面向对象语言设计方式的差异，导致用一般面向对象语言的方式很难理解它，这篇文章就从三句话来了解Js。我称之为“3E箴言”。</p>
+
+<blockquote>
+  <p>Everything is a value  <br />
+ Every value is built by function  <br />
+ Every function has a prototype property</p>
+</blockquote>
+
+<h4 id="一everything-is-a-value">一、Everything is a value</h4>
+<p>在Js的世界里面，一切都是值。为什么这个很重要，我觉得这是Js区别于像Java这样的面向对象语言的最根本的因素。</p>
+
+<p>在Java中，就不是一切都是值，特别是有两个重要的元素它们不是值，一个是Class，一个是method。  <br />
+Class提供的是一个实例的构造蓝图，一个Class的实例是完全按照这个Class绘制的蓝图构造出来的，不容有误。Class不是值，所以Class不能作为method参数，不能作为method返回值，不能赋予给其他的变量。</p>
+
+<p>但是在Js中，没有Class的概念，没有蓝图。只有function，而且function是一个值。我们知道function是唯一构造对象的，可以看做是一个class（当然和class有本质的区别），也是一个method。所以在Js中，可以看做为“class”和method都是值，这就造就了Js极其灵活的基因。</p>
+
+<p>当然了，除了function之外，其他一切数据也都是值。<a href="/javascript/2016/09/08/javascript_value/">详情参见</a></p>
+
+<h4 id="二every-value-is-built-by-function">二、Every value is built by function</h4>
+<p>在Js语言中，所有的值都是有function构建而来，这一点非常重要。这是保证了这么灵活的语言不至于紊乱的重要因素。虽然Js提供了诸多的字面量的方式创建value，但是本质上这些字面量的背后也都是由function构建而来的。</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// number type function</span>
+<span class="kd">function</span> <span class="nb">Number</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{}</span>
+<span class="kd">let</span> <span class="nx">n</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Number</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>   <span class="kd">let</span> <span class="nx">n</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> 
+
+<span class="c1">// string type function</span>
+<span class="kd">function</span> <span class="nb">String</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{}</span>
+<span class="kd">let</span> <span class="nx">s</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">String</span><span class="p">(</span><span class="dl">'</span><span class="s1">String</span><span class="dl">'</span><span class="p">);</span>  <span class="kd">let</span> <span class="nx">s</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">String</span><span class="dl">"</span><span class="p">;</span> 
+
+<span class="c1">// boolean type function</span>
+<span class="kd">function</span> <span class="nb">Boolean</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{}</span>
+<span class="kd">let</span> <span class="nx">b</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Boolean</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>   <span class="kd">let</span> <span class="nx">b</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span> 
+
+<span class="c1">// object type function</span>
+<span class="kd">function</span> <span class="nb">Object</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{}</span>
+<span class="kd">let</span> <span class="nx">o</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Object</span><span class="p">({});</span>   <span class="kd">let</span> <span class="nx">o</span> <span class="o">=</span> <span class="p">{};</span> 
+
+<span class="c1">// function type function</span>
+<span class="kd">function</span> <span class="nb">Function</span><span class="p">()</span> <span class="p">{}</span>
+<span class="kd">let</span> <span class="nx">f</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Function</span><span class="p">(</span><span class="dl">'</span><span class="s1">a</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">b</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">return a + b</span><span class="dl">'</span><span class="p">);</span> 
+<span class="kd">let</span> <span class="nx">f</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">a</span> <span class="o">+</span> <span class="nx">b</span><span class="p">;</span>
+<span class="p">};</span></code></pre></figure>
+
+<p>让所有的值都是有function构建而来有显而易见的好处，就是对所有的值方便管理，比如都能继承Object，比如都有统一的某些属性。</p>
+
+<h4 id="三every-function-has-a-prototype-property">三、Every function has a prototype property</h4>
+<p>在Js中，所有的function都有一个prototype属性，这是Js实现继承的标准所在。我们知道所有的值都是由function构建而来，所以在通过new关键字创建值得时候，创建出来的值的__proto__都指向了该function的prototype属性，这就构成了Js的原型链。</p>
+
+<p>我们知道，function本身也有值，function是由名字叫Function的function构建而来的。所以所有function的__proto__都指向Function.prototype，我们又知道，Object是一个function，Number是一个function… 当然，Function本身也是一个function。</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nb">Object</span><span class="p">.</span><span class="nx">__proto__</span> <span class="o">====</span> <span class="nb">Function</span><span class="p">.</span><span class="nx">prototype</span><span class="p">;</span> 
+<span class="nb">Object</span> <span class="k">instanceof</span> <span class="nb">Function</span><span class="p">;</span>
+
+<span class="nb">Number</span><span class="p">.</span><span class="nx">__proto__</span> <span class="o">====</span> <span class="nb">Function</span><span class="p">.</span><span class="nx">prototype</span><span class="p">;</span> 
+<span class="nb">Number</span> <span class="k">instanceof</span> <span class="nb">Function</span><span class="p">;</span>
+
+<span class="nb">Function</span><span class="p">.</span><span class="nx">__proto__</span> <span class="o">====</span> <span class="nb">Function</span><span class="p">.</span><span class="nx">prototype</span><span class="p">;</span> 
+<span class="nb">Function</span> <span class="k">instanceof</span> <span class="nb">Function</span><span class="p">;</span></code></pre></figure>
+
+<p>所以，我们可以这样给一些function添加方法。</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nb">Function</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">method</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">funcName</span><span class="p">,</span> <span class="nx">func</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">prototype</span><span class="p">[</span><span class="nx">funcName</span><span class="p">])</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">prototype</span><span class="p">[</span><span class="nx">funcName</span><span class="p">]</span> <span class="o">=</span> <span class="nx">func</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+<span class="c1">// 给所有的function添加xxoo的方法</span>
+<span class="nb">Function</span><span class="p">.</span><span class="nx">method</span><span class="p">(</span><span class="dl">'</span><span class="s1">xooo</span><span class="dl">'</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">wow!</span><span class="dl">'</span><span class="p">);</span>
+<span class="p">});</span>
+<span class="kd">var</span> <span class="nx">xxoo</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{};</span>
+<span class="nx">xxoo</span><span class="p">.</span><span class="nx">xooo</span><span class="p">();</span>
+
+<span class="c1">// 给所有string添加trim方法</span>
+<span class="nb">String</span><span class="p">.</span><span class="nx">method</span><span class="p">(</span><span class="dl">'</span><span class="s1">_trim_</span><span class="dl">'</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/^</span><span class="se">\s</span><span class="sr">+|</span><span class="se">\s</span><span class="sr">$/g</span><span class="p">,</span> <span class="dl">''</span><span class="p">);</span>
+<span class="p">});</span>
+<span class="dl">'</span><span class="s1">   xxoo   </span><span class="dl">'</span><span class="p">.</span><span class="nx">_trim_</span><span class="p">()</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">xxoo</span><span class="dl">'</span><span class="p">;</span></code></pre></figure>
+
+<p>认识Js的原型链是认识Js语言设计哲学的关键。  <br />
+这篇文章算是简单的对之前关于Js的所有文章的总结，也是对Js语言的设计原理做一个简单的总结。</p>
+
+<ol>
+  <li><a href="/javascript/2016/09/07/javascript_prototype/">JavaScript-prototype 到底是个什么鬼</a></li>
+  <li><a href="/javascript/2016/09/08/javascript_value/">JavaScript-值与对象</a></li>
+  <li><a href="/javascript/2016/09/09/javascript_inherit/">JavaScript-难道这都算继承？</a></li>
+  <li><a href="/javascript/2016/09/12/javascript_object_property/">JavaScript-Object property’s properties</a></li>
+</ol>
+
+<p>-</p>
+
+:ET

@@ -1,0 +1,331 @@
+I"��<p>最近在用mybatis做项目，需要用到mybatis的拦截器功能，就顺便把mybatis的拦截器源码大致的看了一遍，为了温故而知新，在此就按照自己的理解由浅入深的理解一下它的设计。  <br />
+和大家分享一下，不足和谬误之处欢迎交流。直接入正题。  <br />
+<!-- more -->
+首先，先不管mybatis的源码是怎么设计的，先假设一下自己要做一个拦截器应该怎么做。拦截器的实现都是基于代理的设计模式设计的，简单的说就是要创造一个目标类的代理类，在代理类中执行目标类的方法并拦截执行拦截器代码。</p>
+
+<h4 id="一利用jdk的动态代理设计一个简单的拦截器">一、利用JDK的动态代理设计一个简单的拦截器</h4>
+
+<p>将被拦截的目标接口：</p>
+
+<figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">Target</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">execute</span><span class="o">();</span>
+<span class="o">}</span></code></pre></figure>
+
+<p>目标接口的一个实现类：</p>
+
+<figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">TargetImpl</span> <span class="kd">implements</span> <span class="nc">Target</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">execute</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Execute"</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span></code></pre></figure>
+
+<p>利用JDK的动态代理实现拦截器：</p>
+
+<figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">TargetProxy</span> <span class="kd">implements</span> <span class="nc">InvocationHandler</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="nc">Object</span> <span class="n">target</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="nf">TargetProxy</span><span class="o">(</span><span class="nc">Object</span> <span class="n">target</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">target</span> <span class="o">=</span> <span class="n">target</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="c1">//生成一个目标对象的代理对象</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="nc">Object</span> <span class="nf">bind</span><span class="o">(</span><span class="nc">Object</span> <span class="n">target</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nc">Proxy</span><span class="o">.</span><span class="na">newProxyInstance</span><span class="o">(</span><span class="n">target</span><span class="o">.</span><span class="na">getClass</span><span class="o">().</span><span class="na">getClassLoader</span><span class="o">(),</span>
+            <span class="n">target</span><span class="o">.</span><span class="na">getClass</span><span class="o">().</span><span class="na">getInterfaces</span><span class="o">(),</span>
+            <span class="k">new</span> <span class="nf">TargetProxy</span><span class="o">(</span><span class="n">target</span><span class="o">));</span>
+    <span class="o">}</span>
+
+    <span class="c1">//在执行目标对象方法前加上自己的拦截逻辑</span>
+    <span class="kd">public</span> <span class="nc">Object</span> <span class="nf">invoke</span><span class="o">(</span><span class="nc">Object</span> <span class="n">proxy</span><span class="o">,</span> <span class="nc">Method</span> <span class="n">method</span><span class="o">,</span> <span class="nc">Object</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Throwable</span> <span class="o">{</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Begin"</span><span class="o">);</span>
+        <span class="k">return</span> <span class="n">method</span><span class="o">.</span><span class="na">invoke</span><span class="o">(</span><span class="n">target</span><span class="o">,</span> <span class="n">args</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span></code></pre></figure>
+
+<p>客户端调用：</p>
+
+<figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Client</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">//没有被拦截之前</span>
+        <span class="nc">Target</span> <span class="n">target</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">TargetImpl</span><span class="o">();</span>
+        <span class="n">target</span><span class="o">.</span><span class="na">execute</span><span class="o">();</span> <span class="c1">//Execute</span>
+
+        <span class="c1">//拦截后</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="o">(</span><span class="nc">Target</span><span class="o">)</span><span class="nc">TargetProxy</span><span class="o">.</span><span class="na">bind</span><span class="o">(</span><span class="n">target</span><span class="o">);</span>
+        <span class="n">target</span><span class="o">.</span><span class="na">execute</span><span class="o">();</span>
+        <span class="c1">//Begin</span>
+        <span class="c1">//Execute</span>
+    <span class="o">}</span>
+<span class="o">}</span></code></pre></figure>
+
+<h4 id="二分离拦截逻辑">二、分离拦截逻辑</h4>
+
+<p>上面的设计有几个非常明显的不足，首先说第一个，拦截逻辑被写死在代理对象中：</p>
+
+<figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="nc">Object</span> <span class="nf">invoke</span><span class="o">(</span><span class="nc">Object</span> <span class="n">proxy</span><span class="o">,</span> <span class="nc">Method</span> <span class="n">method</span><span class="o">,</span>
+<span class="nc">Object</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Throwable</span> <span class="o">{</span>
+    <span class="c1">//拦截逻辑被写死在代理对象中，导致客户端无法灵活的设置自己的拦截逻辑</span>
+    <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Begin"</span><span class="o">);</span>
+    <span class="k">return</span> <span class="n">method</span><span class="o">.</span><span class="na">invoke</span><span class="o">(</span><span class="n">target</span><span class="o">,</span> <span class="n">args</span><span class="o">);</span>
+<span class="o">}</span></code></pre></figure>
+
+<p>我们可以将拦截逻辑封装到一个类中，客户端在调用TargetProxy的bind()方法的时候将拦截逻辑一起当成参数传入：
+定义一个拦截逻辑封装的接口Interceptor，这才是真正的拦截器接口。</p>
+
+<figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">Interceptor</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">intercept</span><span class="o">();</span>
+<span class="o">}</span></code></pre></figure>
+
+<p>那么我们的代理类就可以改成：</p>
+
+<figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">TargetProxy</span> <span class="kd">implements</span> <span class="nc">InvocationHandler</span> <span class="o">{</span>
+
+    <span class="kd">private</span> <span class="nc">Object</span> <span class="n">target</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="nc">Interceptor</span> <span class="n">interceptor</span><span class="o">;</span>
+
+    <span class="kd">private</span> <span class="nf">TargetProxy</span><span class="o">(</span><span class="nc">Object</span> <span class="n">target</span><span class="o">,</span> <span class="nc">Interceptor</span> <span class="n">interceptor</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">target</span> <span class="o">=</span> <span class="n">target</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">interceptor</span> <span class="o">=</span> <span class="n">interceptor</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="c1">//将拦截逻辑封装到拦截器中，有客户端生成目标类的代理类的时候一起传入，这样客户端就可以设置不同的拦截逻辑。</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="nc">Object</span> <span class="nf">bind</span><span class="o">(</span><span class="nc">Object</span> <span class="n">target</span><span class="o">,</span> <span class="nc">Interceptor</span> <span class="n">interceptor</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nc">Proxy</span><span class="o">.</span><span class="na">newProxyInstance</span><span class="o">(</span><span class="n">target</span><span class="o">.</span><span class="na">getClass</span><span class="o">().</span><span class="na">getClassLoader</span><span class="o">(),</span>
+            <span class="n">target</span><span class="o">.</span><span class="na">getClass</span><span class="o">().</span><span class="na">getInterfaces</span><span class="o">(),</span>
+        <span class="k">new</span> <span class="nf">TargetProxy</span><span class="o">(</span><span class="n">target</span><span class="o">,</span> <span class="n">interceptor</span><span class="o">));</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">Object</span> <span class="nf">invoke</span><span class="o">(</span><span class="nc">Object</span> <span class="n">proxy</span><span class="o">,</span> <span class="nc">Method</span> <span class="n">method</span><span class="o">,</span>
+    <span class="nc">Object</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Throwable</span> <span class="o">{</span>
+        <span class="c1">//执行客户端定义的拦截逻辑</span>
+        <span class="n">interceptor</span><span class="o">.</span><span class="na">intercept</span><span class="o">();</span>
+        <span class="k">return</span> <span class="n">method</span><span class="o">.</span><span class="na">invoke</span><span class="o">(</span><span class="n">target</span><span class="o">,</span> <span class="n">args</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span></code></pre></figure>
+
+<p>客户端调用代码：</p>
+
+<figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="c1">//客户端可以定义各种拦截逻辑</span>
+<span class="nc">Interceptor</span> <span class="n">interceptor</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Interceptor</span><span class="o">()</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">intercept</span><span class="o">()</span> <span class="o">{</span>
+    <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Go Go Go!!!"</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">};</span>
+<span class="n">target</span> <span class="o">=</span> <span class="o">(</span><span class="nc">Target</span><span class="o">)</span><span class="nc">TargetProxy</span><span class="o">.</span><span class="na">bind</span><span class="o">(</span><span class="n">target</span><span class="o">,</span> <span class="n">interceptor</span><span class="o">);</span>
+<span class="n">target</span><span class="o">.</span><span class="na">execute</span><span class="o">();</span></code></pre></figure>
+
+<h4 id="三更加灵活的拦截器">三、更加灵活的拦截器</h4>
+
+<p>当然，很多时候我们的拦截器中需要判断当前方法需不需要拦截，或者获取当前被拦截的方法参数等。我们可以将被拦截的目标方法对象，参数信息传给拦截器。
+拦截器接口改成：</p>
+
+<figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">Interceptor</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">intercept</span><span class="o">(</span><span class="nc">Method</span> <span class="n">method</span><span class="o">,</span> <span class="nc">Object</span><span class="o">[]</span> <span class="n">args</span><span class="o">);</span>
+<span class="o">}</span></code></pre></figure>
+
+<p>在代理类执行的时候可以将当前方法和参数传给拦截，即TargetProxy的invoke方法改为：</p>
+
+<figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="nc">Object</span> <span class="nf">invoke</span><span class="o">(</span><span class="nc">Object</span> <span class="n">proxy</span><span class="o">,</span> <span class="nc">Method</span> <span class="n">method</span><span class="o">,</span> <span class="nc">Object</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Throwable</span> <span class="o">{</span>
+    <span class="n">interceptor</span><span class="o">.</span><span class="na">intercept</span><span class="o">(</span><span class="n">method</span><span class="o">,</span> <span class="n">args</span><span class="o">);</span>
+    <span class="k">return</span> <span class="n">method</span><span class="o">.</span><span class="na">invoke</span><span class="o">(</span><span class="n">target</span><span class="o">,</span> <span class="n">args</span><span class="o">);</span>
+<span class="o">}</span></code></pre></figure>
+
+<h4 id="四封装拦截器参数">四、封装拦截器参数</h4>
+
+<p>在Java设计原则中有一个叫做迪米特法则，大概的意思就是一个类对其他类知道得越少越好。其实就是减少类与类之间的耦合强度。这是从类成员的角度去思考的。<br />
+什么叫越少越好，什么是最少？最少就是不知道。<br />
+所以我们是不是可以这么理解，一个类所要了解的类应该越少越好呢？<br />
+当然，这只是从类的角度去诠释了迪米特法则。<br />
+甚至可以反过来思考，一个类被其他类了解得越少越好。<br />
+A类只让B类了解总要强于A类让B，C，D类都去了解。</p>
+
+<p>举个例子： <br />
+我们的TargetProxy类中需要了解的类有哪些呢？</p>
+<ol>
+  <li>Object target 不需要了解，因为在TargetProxy中，target都被作为参数传给了别的类使用，自己不需要了解它。</li>
+  <li>Interceptor interceptor 需要了解，需要调用其intercept方法。</li>
+  <li>同样，Proxy需要了解。</li>
+  <li>Method method 参数需要了解，需要调用其invoke方法。  <br />
+同样，如果interceptor接口中需要使用intercept方法传过去Method类，那么也需要了解它。那么既然Interceptor都需要使用Method，
+还不如将Method的执行也放到Interceptor中，不再让TargetProxy类对其了解。Method的执行需要target对象，所以也需要将target对象给Interceptor。
+将Method，target和args封装到一个对象Invocation中，将Invocation传给Interceptor。</li>
+</ol>
+
+<figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Invocation</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="nc">Object</span> <span class="n">target</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="nc">Method</span> <span class="n">method</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="nc">Object</span><span class="o">[]</span> <span class="n">args</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="nf">Invocation</span><span class="o">(</span><span class="nc">Object</span> <span class="n">target</span><span class="o">,</span> <span class="nc">Method</span> <span class="n">method</span><span class="o">,</span> <span class="nc">Object</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">target</span> <span class="o">=</span> <span class="n">target</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">method</span> <span class="o">=</span> <span class="n">method</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">args</span> <span class="o">=</span> <span class="n">args</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="c1">//将自己成员变量的操作尽量放到自己内部，不需要Interceptor获得自己的成员变量再去操作它们，</span>
+    <span class="c1">//除非这样的操作需要Interceptor的其他支持。然而这儿不需要。</span>
+    <span class="kd">public</span> <span class="nc">Object</span> <span class="nf">proceed</span><span class="o">()</span> <span class="kd">throws</span> <span class="nc">InvocationTargetException</span><span class="o">,</span> <span class="nc">IllegalAccessException</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">method</span><span class="o">.</span><span class="na">invoke</span><span class="o">(</span><span class="n">target</span><span class="o">,</span> <span class="n">args</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="c1">//getter and setter</span>
+<span class="o">}</span></code></pre></figure>
+
+<p>Interceptor就变成：</p>
+
+<figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">Interceptor</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="nc">Object</span> <span class="nf">intercept</span><span class="o">(</span><span class="nc">Invocation</span> <span class="n">invocation</span><span class="o">)</span><span class="kd">throws</span> <span class="nc">Throwable</span> <span class="o">;</span>
+<span class="o">}</span></code></pre></figure>
+
+<p>TargetProxy的invoke方法就变成：</p>
+
+<figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="nc">Object</span> <span class="nf">invoke</span><span class="o">(</span><span class="nc">Object</span> <span class="n">proxy</span><span class="o">,</span> <span class="nc">Method</span> <span class="n">method</span><span class="o">,</span>
+<span class="nc">Object</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Throwable</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">interceptor</span><span class="o">.</span><span class="na">intercept</span><span class="o">(</span><span class="k">new</span> <span class="nc">Invocation</span><span class="o">(</span><span class="n">target</span><span class="o">,</span>
+        <span class="n">method</span><span class="o">,</span> <span class="n">args</span><span class="o">));</span>
+<span class="o">}</span></code></pre></figure>
+
+<p>那么就每一个Interceptor拦截器实现都需要最后执行Invocation的proceed方法并返回。
+客户端调用：</p>
+
+<figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="nc">Interceptor</span> <span class="n">interceptor</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Interceptor</span><span class="o">()</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="nc">Object</span> <span class="nf">intercept</span><span class="o">(</span><span class="nc">Invocation</span> <span class="n">invocation</span><span class="o">)</span>  <span class="kd">throws</span> <span class="nc">Throwable</span> <span class="o">{</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Go Go Go!!!"</span><span class="o">);</span>
+        <span class="k">return</span> <span class="n">invocation</span><span class="o">.</span><span class="na">proceed</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">};</span></code></pre></figure>
+
+<h4 id="五利用注解标注需要拦截的目标方法">五、利用注解标注需要拦截的目标方法</h4>
+
+<p>好了，通过一系列调整，设计已经挺好了，不过上面的拦截器还是有一个很大的不足，
+那就是拦截器会拦截目标对象的所有方法，然而这往往是不需要的，我们经常需要拦截器
+拦截目标对象的指定方法。  <br />
+假设目标对象接口有多个方法：</p>
+
+<figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">Target</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">execute1</span><span class="o">();</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">execute2</span><span class="o">();</span>
+<span class="o">}</span> </code></pre></figure>
+
+<p>利用在Interceptor上加注解解决。      <br />
+首先简单的定义一个注解：</p>
+
+<figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="nd">@Retention</span><span class="o">(</span><span class="nc">RetentionPolicy</span><span class="o">.</span><span class="na">RUNTIME</span><span class="o">)</span>
+<span class="nd">@Target</span><span class="o">(</span><span class="nc">ElementType</span><span class="o">.</span><span class="na">TYPE</span><span class="o">)</span>
+<span class="kd">public</span> <span class="nd">@interface</span> <span class="nc">MethodName</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">value</span><span class="o">();</span>
+<span class="o">}</span></code></pre></figure>
+
+<p>在拦截器的实现类加上该注解：</p>
+
+<figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="nd">@MethodName</span><span class="o">(</span><span class="s">"execute1"</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">InterceptorImpl</span> <span class="kd">implements</span> <span class="nc">Interceptor</span> <span class="o">{...}</span></code></pre></figure>
+
+<p>在TargetProxy中判断interceptor的注解，看是否实行拦截：</p>
+
+<figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="nc">Object</span> <span class="nf">invoke</span><span class="o">(</span><span class="nc">Object</span> <span class="n">proxy</span><span class="o">,</span> <span class="nc">Method</span> <span class="n">method</span><span class="o">,</span>
+<span class="nc">Object</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Throwable</span> <span class="o">{</span>
+    <span class="nc">MethodName</span> <span class="n">methodName</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">interceptor</span><span class="o">.</span><span class="na">getClass</span><span class="o">().</span><span class="na">getAnnotation</span><span class="o">(</span><span class="nc">MethodName</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+    <span class="k">if</span> <span class="o">(</span><span class="nc">ObjectUtils</span><span class="o">.</span><span class="na">isNull</span><span class="o">(</span><span class="n">methodName</span><span class="o">))</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nf">NullPointerException</span><span class="o">(</span><span class="s">"xxxx"</span><span class="o">);</span>
+
+    <span class="c1">//如果注解上的方法名和该方法名一样，才拦截</span>
+    <span class="nc">String</span> <span class="n">name</span> <span class="o">=</span> <span class="n">methodName</span><span class="o">.</span><span class="na">value</span><span class="o">();</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">name</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">method</span><span class="o">.</span><span class="na">getName</span><span class="o">()))</span>
+        <span class="k">return</span> <span class="n">interceptor</span><span class="o">.</span><span class="na">intercept</span><span class="o">(</span><span class="k">new</span> <span class="nc">Invocation</span><span class="o">(</span><span class="n">target</span><span class="o">,</span>    <span class="n">method</span><span class="o">,</span> <span class="n">args</span><span class="o">));</span>
+
+    <span class="k">return</span> <span class="n">method</span><span class="o">.</span><span class="na">invoke</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">target</span><span class="o">,</span> <span class="n">args</span><span class="o">);</span>
+<span class="o">}</span></code></pre></figure>
+
+<p>最后客户端调用：</p>
+
+<figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="nc">Target</span> <span class="n">target</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">TargetImpl</span><span class="o">();</span>
+<span class="nc">Interceptor</span> <span class="n">interceptor</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">InterceptorImpl</span><span class="o">();</span>
+<span class="n">target</span> <span class="o">=</span> <span class="o">(</span><span class="nc">Target</span><span class="o">)</span><span class="nc">TargetProxy</span><span class="o">.</span><span class="na">bind</span><span class="o">(</span><span class="n">target</span><span class="o">,</span> <span class="n">interceptor</span><span class="o">);</span>
+<span class="n">target</span><span class="o">.</span><span class="na">execute</span><span class="o">();</span></code></pre></figure>
+
+<h4 id="六将绑定逻辑移到拦截器中简化客户端调用">六、将绑定逻辑移到拦截器中，简化客户端调用</h4>
+
+<p>从客户端调用代码可以看出，客户端首先需要创建一个目标对象和拦截器，然后将拦截器和目标对象绑定并获取代理对象，最后执行代理对象的execute()方法。  <br />
+根据迪米特法则来讲，其实客户端根本不需要了解TargetProxy类。将绑定逻辑放到拦截器内部，客户端只需要和拦截器打交道就可以了。  <br />
+即拦截器接口变为：</p>
+
+<figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">Interceptor</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="nc">Object</span> <span class="nf">intercept</span><span class="o">(</span><span class="nc">Invocation</span> <span class="n">invocation</span><span class="o">)</span>  <span class="kd">throws</span> <span class="nc">Throwable</span> <span class="o">;</span>
+    <span class="kd">public</span> <span class="nc">Object</span> <span class="nf">register</span><span class="o">(</span><span class="nc">Object</span> <span class="n">target</span><span class="o">);</span>
+<span class="o">}</span></code></pre></figure>
+
+<p>拦截器实现：</p>
+
+<figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="nd">@MethodName</span><span class="o">(</span><span class="s">"execute1"</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">InterceptorImpl</span> <span class="kd">implements</span> <span class="nc">Interceptor</span> <span class="o">{</span>
+
+    <span class="kd">public</span> <span class="nc">Object</span> <span class="nf">intercept</span><span class="o">(</span><span class="nc">Invocation</span> <span class="n">invocation</span><span class="o">)</span><span class="kd">throws</span> <span class="nc">Throwable</span> <span class="o">{</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Go Go Go!!!"</span><span class="o">);</span>
+        <span class="k">return</span> <span class="n">invocation</span><span class="o">.</span><span class="na">proceed</span><span class="o">();</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">Object</span> <span class="nf">register</span><span class="o">(</span><span class="nc">Object</span> <span class="n">target</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nc">TargetProxy</span><span class="o">.</span><span class="na">bind</span><span class="o">(</span><span class="n">target</span><span class="o">,</span> <span class="k">this</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span></code></pre></figure>
+
+<p>客户端调用：</p>
+
+<figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="nc">Target</span> <span class="n">target</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">TargetImpl</span><span class="o">();</span>
+<span class="nc">Interceptor</span> <span class="n">interceptor</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">InterceptorImpl</span><span class="o">();</span>
+
+<span class="n">target</span> <span class="o">=</span> <span class="o">(</span><span class="nc">Target</span><span class="o">)</span><span class="n">interceptor</span><span class="o">.</span><span class="na">register</span><span class="o">(</span><span class="n">target</span><span class="o">);</span>
+<span class="n">target</span><span class="o">.</span><span class="na">execute1</span><span class="o">();</span></code></pre></figure>
+
+<h4 id="七mybatis的拦截器实现">七、Mybatis的拦截器实现</h4>
+
+<p>OK，上面的一系列过程其实都是mybatis的拦截器代码结构，我只是学习了之后用最简单的方法理解一遍罢了。  <br />
+上面的TargetProxy其实就是mybatis的Plug类。Interceptor和Invocation几乎一样。  <br />
+只是mybatis的Interceptor支持的注解更加复杂。  <br />
+mybatis最终是通过将自定义的Interceptor配置到xml文件中：</p>
+
+<figure class="highlight"><pre><code class="language-xml" data-lang="xml"><span class="c">&lt;!-- 自定义处理Map返回结果的拦截器 --&gt;</span>
+<span class="nt">&lt;plugins&gt;</span>
+<span class="nt">&lt;plugin</span> <span class="na">interceptor=</span><span class="s">"com.gs.cvoud.dao.interceptor.MapInterceptor"</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/plugins&gt;</span></code></pre></figure>
+
+<p>通过读取配置文件中的Interceptor，通过反射构造其实例，将所有的Interceptor保存到InterceptorChain中。</p>
+
+<figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">InterceptorChain</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Interceptor</span><span class="o">&gt;</span> <span class="n">interceptors</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;</span><span class="nc">Interceptor</span><span class="o">&gt;();</span>
+    <span class="kd">public</span> <span class="nc">Object</span> <span class="nf">pluginAll</span><span class="o">(</span><span class="nc">Object</span> <span class="n">target</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">for</span> <span class="o">(</span><span class="nc">Interceptor</span> <span class="n">interceptor</span> <span class="o">:</span> <span class="n">interceptors</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">target</span> <span class="o">=</span> <span class="n">interceptor</span><span class="o">.</span><span class="na">plugin</span><span class="o">(</span><span class="n">target</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="n">target</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">addInterceptor</span><span class="o">(</span><span class="nc">Interceptor</span> <span class="n">interceptor</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">interceptors</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">interceptor</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Interceptor</span><span class="o">&gt;</span> <span class="nf">getInterceptors</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nc">Collections</span><span class="o">.</span><span class="na">unmodifiableList</span><span class="o">(</span><span class="n">interceptors</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span></code></pre></figure>
+
+<p>mybatis的拦截器只能代理指定的四个类：ParameterHandler、ResultSetHandler、StatementHandler以及Executor。  <br />
+这是在mybatis的Configuration中写死的，例如（其他三个类似）：</p>
+
+<figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="nc">ParameterHandler</span> <span class="nf">newParameterHandler</span><span class="o">(</span><span class="nc">MappedStatement</span> <span class="n">mappedStatement</span><span class="o">,</span> 
+        <span class="nc">Object</span> <span class="n">parameterObject</span><span class="o">,</span> <span class="nc">BoundSql</span> <span class="n">boundSql</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nc">ParameterHandler</span> <span class="n">parameterHandler</span> <span class="o">=</span> 
+        <span class="n">mappedStatement</span><span class="o">.</span><span class="na">getLang</span><span class="o">().</span><span class="na">createParameterHandler</span><span class="o">(</span><span class="n">mappedStatement</span><span class="o">,</span> 
+            <span class="n">parameterObject</span><span class="o">,</span> <span class="n">boundSql</span><span class="o">);</span>
+
+    <span class="c1">//将配置文件中读取的所有的Interceptor都注册到ParameterHandler中，最后通过每个Interceptor的注解判断是否需要拦截该ParameterHandler的某个方法。</span>
+    <span class="n">parameterHandler</span> <span class="o">=</span> <span class="o">(</span><span class="nc">ParameterHandler</span><span class="o">)</span> <span class="n">interceptorChain</span><span class="o">.</span><span class="na">pluginAll</span><span class="o">(</span><span class="n">parameterHandler</span><span class="o">);</span>
+    <span class="k">return</span> <span class="n">parameterHandler</span><span class="o">;</span>
+<span class="o">}</span></code></pre></figure>
+
+<p>所以我们可以自定义mybatis的插件（拦截器）修改mybatis的很多默认行为， <br />
+例如， <br />
+通过拦截ResultSetHandler修改接口返回类型；  <br />
+通过拦截StatementHandler修改mybatis框架的分页机制；  <br />
+通过拦截Executor查看mybatis的sql执行过程等等。</p>
+:ET

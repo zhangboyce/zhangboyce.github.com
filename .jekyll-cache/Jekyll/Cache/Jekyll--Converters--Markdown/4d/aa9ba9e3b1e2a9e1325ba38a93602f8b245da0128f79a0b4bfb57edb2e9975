@@ -1,0 +1,149 @@
+I"�1<p>在很多语言中都有闭包这个概念，而且每种语言中对闭包的定义貌似还不怎么一样。
+我第一次接触闭包的概念是在javascript语言中，而第一次正在觉得把闭包定义
+得非常准确形象的是在接触ruby之后，在ruby语言中，是这样定义闭包的：<br />
+<!-- more --></p>
+
+<blockquote>
+  <p>在定义一个代码块时，会获取当前的局部绑定，然后把块连同绑定传递给一个方法，
+在定义一个代码块时，会获取当前的局部绑定，然后把块连同绑定传递给一个方法，
+此时，方法中的局部变量对块来说是不可见的。基于块这样的封闭的特性，计算机
+科学家喜欢把这样的代码块称为闭包。</p>
+</blockquote>
+
+<h4 id="一从javascript和ruby看闭包是什么">一、从Javascript和ruby看闭包是什么？</h4>
+<ul>
+  <li>在Javascript中，function是第一对象，一个闭包就是一个满足某些要求的function。
+比如以下代码，setup function中返回一个function，该function访问了setup function 
+的局部变量，并连同function一起被返回。</li>
+</ul>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span>  <span class="nx">setup</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">//函数setup的私有变量</span>
+    <span class="kd">var</span> <span class="nx">count</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="c1">//返回函数访问私有变量</span>
+    <span class="k">return</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">(</span><span class="nx">count</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">);</span>
+    <span class="p">};</span>
+<span class="p">};</span></code></pre></figure>
+
+<p><b>这种方法可以将setup function的局部变量带到它的作用域之外。</b></p>
+
+<ul>
+  <li>在ruby中，代码块作为“可调用对象”，被用来实现闭包的功能。在ruby中，只有在调用
+一个方法的时候才能定义块，块会直接传递给这个方法，在方法中用yield关键字调用该块。
+可以看出，与javascript中不同的是，在ruby中闭包不是作为方法的返回值出现，而是作为
+方法的参数出现的。</li>
+</ul>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">def</span> <span class="nf">my_method</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="s2">"i am in method"</span>
+    <span class="k">yield</span><span class="p">(</span><span class="s2">"i am a argument from method to closure"</span><span class="p">)</span>
+<span class="k">end</span>
+<span class="n">x</span> <span class="o">=</span> <span class="s2">"i am out method"</span>
+<span class="n">my_method</span> <span class="p">{</span><span class="o">|</span><span class="n">y</span><span class="o">|</span> <span class="c1">#{x}, #{y}}</span>
+<span class="sr">//i</span> <span class="n">am</span> <span class="n">out</span> <span class="nb">method</span><span class="p">,</span> <span class="n">i</span> <span class="n">am</span> <span class="n">a</span> <span class="n">argument</span> <span class="n">from</span> <span class="nb">method</span> <span class="n">to</span> <span class="n">closure</span></code></pre></figure>
+
+<p><b>可以看出，ruby中的闭包可以将当前定义处的变量值绑定并一起带到方法内部，而且
+在方法内部，闭包是一个完全封闭的，对方法内的变量是不可见的。</b>  <br />
+在ruby中，闭包也是用来将某个作用域的值绑定带到另一个作用域。ruby中的扁平作用域，共享
+作用域等都是依靠闭包实现的。</p>
+
+<h4 id="二如此说来java中也有闭包">二、如此说来，Java中也有闭包？</h4>
+<p>从javascript和ruby的闭包定义中，我们至少可以简单的总结一下闭包大概需要满足什么条件。</p>
+
+<ul>
+  <li>闭包应该是一个“可调用对象”，无论是javascript中的返回function，还是ruby中作为参数
+的代码块，都是一个“可调用对象”。</li>
+  <li>闭包有封闭的作用域。在闭包定义的时候，能够获取绑定当前域的变量。并随着闭包被返回或者
+被作为参数传递给一个方法，闭包将携带一个域的变量到另一个域，且变量在闭包内封闭。</li>
+</ul>
+
+<p>在Java中，唯一的“可调用对象”就是对象，也只有对象才能作为返回或者方法参数被传递。在对象被
+实例化的时候能够获取当前环境的变量，并且能将这些变量带到其他作用域中。Java所有的类之间
+的协作以及Java的面向对象的特点也正在于此：类就是闭包。</p>
+
+<h4 id="三groovy中所谓的闭包">三、Groovy中所谓的闭包</h4>
+<p>Groovy中所谓的闭包是什么。首先来看一下Groovy中所谓的闭包语法：</p>
+
+<figure class="highlight"><pre><code class="language-groovy" data-lang="groovy"><span class="o">{</span> <span class="n">item</span><span class="o">++</span> <span class="o">}</span>                                                                        
+
+<span class="o">{</span> <span class="n">String</span> <span class="n">x</span><span class="o">,</span> <span class="kt">int</span> <span class="n">y</span> <span class="o">-&gt;</span>                                
+    <span class="n">println</span> <span class="s2">"hey ${x} the value is ${y}"</span>
+<span class="o">}</span>
+
+<span class="kt">def</span> <span class="n">closure</span> <span class="o">=</span> <span class="o">{</span> <span class="n">reader</span> <span class="o">-&gt;</span>                                         
+    <span class="kt">def</span> <span class="n">line</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="na">readLine</span><span class="o">()</span>
+    <span class="n">line</span><span class="o">.</span><span class="na">trim</span><span class="o">()</span>
+<span class="o">}</span></code></pre></figure>
+
+<p>在Groovy中，闭包的概念更加的宽泛，不像javascript那样必须是返回函数，也不像ruby那样只能作为
+方法参数。在Groovy中，只要是一个代码块就可以叫做闭包，可以作为方法参数，可以作为返回值，
+可以单独被调用。为什么Groovy中的闭包这么牛逼？来看Groovy官网的一段闭包的描述：</p>
+
+<blockquote>
+  <p>A closure is an instance of the groovy.lang.Closure class, 
+making it assignable to a variable or a field as any other variable, 
+despite being a block of code:</p>
+</blockquote>
+
+<figure class="highlight"><pre><code class="language-groovy" data-lang="groovy"><span class="kt">def</span> <span class="n">listener</span> <span class="o">=</span> <span class="o">{</span> <span class="n">e</span> <span class="o">-&gt;</span> <span class="n">println</span> <span class="s2">"Clicked on $e.source"</span> <span class="o">}</span>      
+<span class="k">assert</span> <span class="n">listener</span> <span class="k">instanceof</span> <span class="n">Closure</span>
+
+<span class="n">Closure</span> <span class="n">callback</span> <span class="o">=</span> <span class="o">{</span> <span class="n">println</span> <span class="s1">'Done!'</span> <span class="o">}</span>                      
+<span class="n">Closure</span><span class="o">&lt;</span><span class="n">Boolean</span><span class="o">&gt;</span> <span class="n">isTextFile</span> <span class="o">=</span> <span class="o">{</span>
+    <span class="n">File</span> <span class="n">it</span> <span class="o">-&gt;</span> <span class="n">it</span><span class="o">.</span><span class="na">name</span><span class="o">.</span><span class="na">endsWith</span><span class="o">(</span><span class="s1">'.txt'</span><span class="o">)</span>                     
+<span class="o">}</span></code></pre></figure>
+
+<p>所以，在Groovy中，闭包就是类Closure，定义一个闭包就是定义一个Closure类。我们知道，在Java中
+其实类就可以看成是闭包。因此我们也可以说Groovy中其实没有闭包，Groovy所谓的闭包只不过是提供一种
+简便的语法支持来构建简单的类。</p>
+
+<h4 id="四方法还是闭包groovy">四、方法还是闭包？——Groovy</h4>
+<p>当然，Groovy中的这种闭包写起来还是很便利，但是我们在使用Groovy的时候，往往会面临一个问题，
+这个地方是用一个方法还是用一个闭包？</p>
+
+<figure class="highlight"><pre><code class="language-groovy" data-lang="groovy"><span class="kt">def</span> <span class="nf">method</span><span class="o">(</span><span class="kt">def</span> <span class="n">arg1</span><span class="o">,</span> <span class="kt">def</span> <span class="n">arg2</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">println</span><span class="o">(</span><span class="s2">"method: $arg1 + $arg2"</span><span class="o">)</span>
+<span class="o">}</span>
+
+<span class="kt">def</span> <span class="n">closure</span> <span class="o">=</span> <span class="o">{</span><span class="kt">def</span> <span class="n">arg1</span><span class="o">,</span> <span class="kt">def</span> <span class="n">arg2</span> <span class="o">-&gt;</span>
+    <span class="n">println</span><span class="o">(</span><span class="s2">"closure: $arg1 + $arg2"</span><span class="o">)</span>
+<span class="o">}</span></code></pre></figure>
+
+<p>为了回答这个问题其实也很简单，只要清楚Groovy中闭包的本质是一个类就可以，在Groovy或Java
+中，类是唯一的“可调用对象”，唯一可以作为参数和返回值的对象。所以，使用Groovy的时候只有在
+一种情况下建议使用闭包，就是在Java中这个地方你不得不使用类但是又觉得使用类有点多余的时候，
+或者你在不得不使用匿名内部类的时候，就使用Groovy提供的便利构建类的方式——闭包。其他情况，
+用方法。</p>
+
+<p>所以在一个类中，把一个方法定义成闭包，但是这个闭包不作为方法参数，也不作为方法返回值时，我觉得
+是没有任何意义的，除了语法上让别人觉得你懂点Groovy之外。</p>
+
+<h4 id="五groovy中的闭包似乎可以是这个样子">五、Groovy中的闭包似乎可以是这个样子</h4>
+<p>单从语法上讲，我们想象中的Groovy闭包是不是应该更像这个样子？</p>
+
+<figure class="highlight"><pre><code class="language-groovy" data-lang="groovy"><span class="kt">def</span> <span class="nf">methodReturnClosure</span><span class="o">(</span><span class="kt">def</span> <span class="n">arg</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kt">int</span> <span class="n">i</span><span class="o">=</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="o">{</span>
+        <span class="n">println</span> <span class="s2">"$arg + ${i++}"</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="kt">def</span> <span class="n">closureReturnClosure</span> <span class="o">=</span> <span class="o">{</span> <span class="kt">def</span> <span class="n">arg</span> <span class="o">-&gt;</span>
+    <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="o">{</span>
+        <span class="n">println</span> <span class="s2">"$arg + ${i++}"</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="kt">def</span> <span class="n">closure</span> <span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="na">methodReturnClosure</span><span class="o">(</span><span class="s2">"methodReturnClosure"</span><span class="o">)</span>
+<span class="n">closure</span><span class="o">.</span><span class="na">call</span><span class="o">()</span>
+
+<span class="n">closure</span> <span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="na">closureReturnClosure</span><span class="o">(</span><span class="s2">"closureReturnClosure"</span><span class="o">)</span>
+<span class="n">closure</span><span class="o">.</span><span class="na">call</span><span class="o">()</span></code></pre></figure>
+
+<p>但是，似乎我们很少会这样使用，这不是javascript中的标准的闭包定义么？因为
+在Groovy或者Java中，这种情况我们都使用类代替了，当然也可以这么做，只是一种便利
+的语法支持，和使用类没有任何本质区别。</p>
+
+:ET

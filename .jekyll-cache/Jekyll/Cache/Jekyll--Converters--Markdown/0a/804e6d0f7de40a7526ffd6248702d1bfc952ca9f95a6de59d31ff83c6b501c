@@ -1,0 +1,76 @@
+I"�<p>关于Js callback function其实没有什么好说的，但是看到网上大量文章还在乐此不疲的讨论，关键很多文章都没有说到本质，有的甚至把回调和异步什么的强行扯上关系，让本来就不理解回调的懵逼少年情何以堪。</p>
+
+<h4 id="一你可以这样理解回调">一、你可以这样理解回调</h4>
+
+<p>一言不合，先上一段Java代码：</p>
+
+<figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kt">void</span> <span class="nf">method</span><span class="o">(</span><span class="nc">Obejct</span> <span class="n">obj</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nc">String</span> <span class="n">objString</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="na">toString</span><span class="o">();</span>
+<span class="o">}</span></code></pre></figure>
+
+<p>我要告诉你这就是回调的本质，我想要么你会正态懵逼，要么你会把我打得正态懵逼。假设你已经认同了上面的代码就是回调，那么你不难给回调下个定义：</p>
+
+<blockquote>
+  <p>“回调就是在一个方法里面调用另外一个方法的编程方式。”</p>
+</blockquote>
+
+<p>那么我们不禁要问，为什么要在一个方法里面调用另外一个方法？要想回答这个深不可测的问题，只需反问一句：要不然呢？
+<strong>要不然就把“另一个方法”的代码复制到该方法被调用的地方</strong>。所以我们是不是可以大胆的得出一个不负责任的结论：</p>
+
+<p><strong>在程序语言的世界里，方法的存在是为了代码的复用，回调只是通过方法参数将要复用的代码传递给该方法加以复用的一种方式而已。</strong></p>
+
+<h4 id="二js中的回调函数">二、Js中的回调函数</h4>
+
+<p>在Js的世界里，和Java有一点区别的地方在于：Js中没有class的概念，function就是一个对象，可以被赋值给一个变量，可以被当做参数，可以被当成另一个function的返回值，function对象与Js里面其他对象的唯一区别就是function对象是可以被执行的。</p>
+
+<p>因为function就是对象，所以在Js里面的回调显得更加简单：</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">f1</span><span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// do someting</span>
+    <span class="nx">callback</span><span class="p">();</span>
+<span class="p">}</span>
+<span class="kd">var</span> <span class="nx">callback</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">I am a callback function.</span><span class="dl">'</span><span class="p">);</span>	
+<span class="p">};</span>
+<span class="nx">f1</span><span class="p">(</span><span class="nx">callback</span><span class="p">);</span></code></pre></figure>
+
+<p>当然上面的例子都是最简单的回调方式，回调最常见的还是作为“钩子”方法，将function内部细节暴露给回调函数。</p>
+
+<h4 id="三回调函数作为钩子方法">三、回调函数作为“钩子”方法</h4>
+
+<p>被回调的函数作为函数，也可以有自己的参数，这个时候我们在函数内部调用回调函数的时候就需要给回调函数传递参数。正是这种方式将函数作用域内部的细节通过回调函数暴露到了函数作用域外部。</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">f1</span><span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// do someting</span>
+    <span class="kd">var</span> <span class="nx">p1</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">p2</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+    <span class="nx">callback</span><span class="p">(</span><span class="nx">p1</span><span class="p">,</span> <span class="nx">p2</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="kd">var</span> <span class="nx">callback</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">p1</span><span class="p">,</span> <span class="nx">p2</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">p1</span> <span class="o">+</span> <span class="nx">p2</span><span class="p">);</span>	
+<span class="p">};</span>
+<span class="nx">f1</span><span class="p">(</span><span class="nx">callback</span><span class="p">);</span></code></pre></figure>
+
+<p>思考这样一种场景：  <br />
+一位老师正在批改试卷，并给出所有小题的得分，等所有试卷批改完毕之后再将每一份试卷的小题得分加起来算总分。这个时候老师发现他会倒腾（遍历）这批试卷两次，不行我请个学生来帮我，我改一份试卷，就把这个试卷交给这位同学，这位同学就把试卷总分加出来。这其实就是一个回调的场景。  <br />
+老师就是函数f1，学生就是回调函数callback，修改过有小题分的试卷就是参数。</p>
+
+<h4 id="四回调是一种访问同级作用域变量的方式">四、回调是一种访问同级作用域变量的方式</h4>
+<p>通过<a href="/javascript/2016/08/23/javascript_var_scope/">JavaScript 变量作用域问题</a>我们可以知道，在Js的世界里，父级作用域不能访问子级作用域的的局部变量，同级之间也不能相互访问，那么如果要访问同级作用域的变量怎么办呢？回调是一种方式，还是同样的栗子：</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">f1</span><span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">p1</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">p2</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+    <span class="nx">callback</span><span class="p">(</span><span class="nx">p1</span><span class="p">,</span> <span class="nx">p2</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">// 回调函数通过参数访问同级函数作用域定义的变量</span>
+<span class="kd">var</span> <span class="nx">callback</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">p1</span><span class="p">,</span> <span class="nx">p2</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">p1</span> <span class="o">+</span> <span class="nx">p2</span><span class="p">);</span>	
+<span class="p">};</span>
+<span class="nx">f1</span><span class="p">(</span><span class="nx">callback</span><span class="p">);</span></code></pre></figure>
+
+<h4 id="五回调函数和异步的关系">五、回调函数和异步的关系</h4>
+<p>回调函数和异步编程没有什么关系。如果说非要扯上一点点关系，那就是有人会将两者混淆。</p>
+
+:ET

@@ -1,0 +1,66 @@
+I"<h4 id="一-es6之前函数是唯一提供局部变量作用域的地方">一、 ES6之前，函数是唯一提供局部变量作用域的地方</h4>
+<p>在ES6之前，Js不支持块级作用域，这意味着在if语句、switch语句、for循环、while循环中无法支持块级作用域。</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">outer</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">outer</span><span class="dl">'</span><span class="p">;</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">o</span><span class="p">);</span> <span class="c1">// outer</span>
+    <span class="k">if</span> <span class="p">(</span><span class="kc">true</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">_if</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">inner if</span><span class="dl">'</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">_if</span><span class="p">);</span> <span class="c1">// inner if</span>
+<span class="p">}</span>
+<span class="nx">outer</span><span class="p">();</span></code></pre></figure>
+
+<h4 id="二-es6之后可用let关键字提供块级变量作用域">二、 ES6之后，可用let关键字提供块级变量作用域</h4>
+<p>ES6之后，可以通过let关键字来定义变量，它修正了var关键字的缺点，支持块级作用域。</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">outer</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="kc">true</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">let</span> <span class="nx">_if</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">inner if</span><span class="dl">'</span><span class="p">;</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">_if</span><span class="p">);</span> <span class="c1">// inner if</span>
+    <span class="p">}</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">_if</span><span class="p">);</span> <span class="c1">// _if is not defined</span>
+<span class="p">}</span>
+<span class="nx">outer</span><span class="p">();</span></code></pre></figure>
+
+<h4 id="三-子级作用域可以访问父级作用域的变量全局作用域是顶层父级">三、 子级作用域可以访问父级作用域的变量（全局作用域是顶层父级）</h4>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">outer</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">outer</span><span class="dl">'</span><span class="p">;</span>
+    <span class="kd">function</span> <span class="nx">inner</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">inner</span><span class="dl">'</span><span class="p">;</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">o</span><span class="p">);</span> <span class="c1">// outer</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">i</span><span class="p">);</span> <span class="c1">// inner</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="nx">outer</span><span class="p">();</span></code></pre></figure>
+
+<h4 id="四-同级作用域之间不能相互访问作用域变量">四、 同级作用域之间不能相互访问作用域变量</h4>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">outer</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">function</span> <span class="nx">inner1</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">inner</span><span class="dl">'</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="kd">function</span> <span class="nx">inner2</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">i</span><span class="p">);</span> <span class="c1">// i is not defined</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="nx">outer</span><span class="p">();</span></code></pre></figure>
+
+<h4 id="五-父级作用域不可以访问子级作用域的变量">五、 父级作用域不可以访问子级作用域的变量</h4>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">outer</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">function</span> <span class="nx">inner</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">inner</span><span class="dl">'</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">i</span><span class="p">);</span> <span class="c1">//i is not defined</span>
+<span class="p">}</span>
+<span class="nx">outer</span><span class="p">();</span></code></pre></figure>
+
+<p>通过以上几点我们可以知道Js的提供的作用域是一个作用域链，简单来讲就是：</p>
+
+<blockquote>
+  <p>某作用域内，只能访问该作用域内提供的局部变量和该作用域的父级作用域能访问的变量。</p>
+</blockquote>
+
+:ET

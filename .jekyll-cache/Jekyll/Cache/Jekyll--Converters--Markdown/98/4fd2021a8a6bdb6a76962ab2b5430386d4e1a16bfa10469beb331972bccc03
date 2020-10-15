@@ -1,0 +1,63 @@
+I"><p>我们知道在Js语言中，定义了7中基本类型的数据，number、string、boolean、object、function和undefined，每一种数据类型的值都是有function构建而来，而function本身呢也是一种数据，是由Function function构建而来。这样呢就形成了语言的逻辑自洽。</p>
+
+<p>这篇文章主要讨论object的数据类型，object类型的数据都是有Object function构建而来，是Js中主要的数据类型之一。</p>
+
+<p>Js的object数据令人着迷的地方就是它非常的灵活易用，你可以很简单的定义一个object，然后添加property，修改property，甚至删除property。</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">let</span> <span class="nx">obj</span> <span class="o">=</span> <span class="p">{</span><span class="na">name</span><span class="p">:</span> <span class="dl">'</span><span class="s1">boyce</span><span class="dl">'</span><span class="p">};</span>
+<span class="nx">obj</span><span class="p">.</span><span class="nx">age</span> <span class="o">=</span> <span class="mi">18</span><span class="p">;</span>
+<span class="nx">obj</span><span class="p">.</span><span class="nx">say</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="dl">'</span><span class="s1"> is </span><span class="dl">'</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">age</span><span class="p">);</span>
+<span class="p">};</span>
+<span class="nx">obj</span><span class="p">.</span><span class="nx">say</span><span class="p">();</span> <span class="c1">// boyce is 18</span>
+<span class="nx">obj</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">everybody</span><span class="dl">'</span><span class="p">;</span>
+<span class="nx">obj</span><span class="p">.</span><span class="nx">say</span><span class="p">();</span> <span class="c1">// everybody is 18</span>
+<span class="k">delete</span> <span class="nx">obj</span><span class="p">.</span><span class="nx">age</span><span class="p">;</span>
+<span class="nx">obj</span><span class="p">.</span><span class="nx">say</span><span class="p">();</span> <span class="c1">// everybody is undefined</span></code></pre></figure>
+
+<p>Js也提供了一些方法很方便的访问object的属性名字。</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">let</span> <span class="nx">obj</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">name</span><span class="p">:</span> <span class="dl">'</span><span class="s1">boyce</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">age</span><span class="p">:</span> <span class="mi">18</span><span class="p">,</span>
+    <span class="na">say</span><span class="p">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="dl">'</span><span class="s1"> is </span><span class="dl">'</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">age</span><span class="p">);</span>
+    <span class="p">},</span>
+    <span class="na">__proto__</span><span class="p">:</span> <span class="p">{</span>
+        <span class="na">p_name</span><span class="p">:</span> <span class="dl">'</span><span class="s1">p_name</span><span class="dl">'</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">obj</span><span class="p">);</span> <span class="c1">// [ 'name', 'age', 'say' ]</span>
+<span class="nb">Object</span><span class="p">.</span><span class="nx">getOwnPropertyNames</span><span class="p">(</span><span class="nx">obj</span><span class="p">);</span> <span class="c1">// [ 'name', 'age', 'say' ]</span>
+<span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">attr</span> <span class="k">in</span> <span class="nx">obj</span><span class="p">)</span>  <span class="c1">// 'name', 'age', 'say' , 'p_name'</span></code></pre></figure>
+
+<p>既然提供了这个多访问的方式，那每一种方式肯定时候差别的。  <br />
+Object.keys() 只能访问own property，并且这个property必须是enumerable的；  <br />
+Object.getOwnPropertyNames(obj)也只能访问own property，但是呢可以访问unenumerable的；  <br />
+for … in … 的方式，能访问所有原型链里面的属性，只要这些属性是enumerable的。</p>
+
+<p>什么是own property也很好理解，就是定义在自己的属性列表里面的，不需要去下一级原型链查找的属性。</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">let</span> <span class="nx">obj</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">name</span><span class="p">:</span> <span class="dl">'</span><span class="s1">boyce</span><span class="dl">'</span><span class="p">,</span> <span class="c1">// own property</span>
+    <span class="na">__proto__</span><span class="p">:</span> <span class="p">{</span>
+        <span class="na">p_name</span><span class="p">:</span> <span class="dl">'</span><span class="s1">p_name</span><span class="dl">'</span> <span class="c1">// not own property</span>
+    <span class="p">}</span>
+<span class="p">};</span></code></pre></figure>
+
+<p>那么什么是 enumerable property呢？一般情况下，我们自己通过字面量的方式为object添加的每一个property都是enumerable property，
+Js也提供了怎么定义一个unenumerable property的方法。</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">let</span> <span class="nx">obj</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">name</span><span class="p">:</span> <span class="dl">'</span><span class="s1">boyce</span><span class="dl">'</span><span class="p">,</span> <span class="c1">// enumerable property</span>
+<span class="p">};</span>
+<span class="nx">obj</span><span class="p">.</span><span class="nx">age</span> <span class="o">=</span> <span class="mi">18</span><span class="p">;</span> <span class="c1">// enumerable property</span>
+
+<span class="nb">Object</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">(</span><span class="nx">obj</span><span class="p">,</span> <span class="dl">'</span><span class="s1">say</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span><span class="na">enumerable</span><span class="p">:</span> <span class="kc">false</span><span class="p">});</span> <span class="c1">// unenumerable property</span></code></pre></figure>
+
+<p>关于Object.defineProperty 详细API说明可以看<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty">参考文档</a>。</p>
+
+<p>总的来讲呢，就是Js的object property是非常灵活的能被遍历，访问的。Js也提供了好用的API方便设置property的属性。</p>
+
+:ET

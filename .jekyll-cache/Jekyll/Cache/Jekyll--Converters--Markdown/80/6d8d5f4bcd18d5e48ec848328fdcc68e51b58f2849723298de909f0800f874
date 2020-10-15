@@ -1,0 +1,146 @@
+I"?<p>众所周知，Js语言是随着Web时代的兴起而产生的，最开始是专门为了浏览器端而设计，现在随着Node的兴起，Js语言开始在服务器端大展拳脚。Js设计的时候Java面向对象的思想正风靡整个互联网，以至于Js的名字都要起的感觉和Java有半毛钱关系似得，在这种面向对象的思想的影响下，Js也被设计成一门面向对象的语言，乃至更加“面向对象”。</p>
+
+<h4 id="一在js中一切都是值">一、在Js中，一切都是值</h4>
+<p>在程序语言的世界里，什么是值？值就是数据。</p>
+
+<blockquote>
+  <p>程序语言都可以被看作是数据加结构的组合，结构是逻辑、是运算、是程序的框架、是不变的部分；数据是值、是变化的部分。
+当然很多时候结构和数据是相对的。</p>
+</blockquote>
+
+<p>举例说明，在Java中，Class就是结构，Class的实例就是值，实例的方法就是结构，方法的参数，局部变量等就是值。只有值才能被方法返回，才能被当做参数，才能被赋予给其他变量，赋值赋值就是这个意思。</p>
+
+<p>那么，在Js的世界里面，一切都是值是什么意思？就是一切的东西都可以被当做值赋给其他变量，当做方法参数，当做方法返回值，包括方法本身。</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">let</span> <span class="nx">n</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+<span class="kd">let</span> <span class="nx">s</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">String</span><span class="dl">"</span><span class="p">;</span>
+<span class="kd">let</span> <span class="nx">b</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+<span class="kd">let</span> <span class="nx">o</span> <span class="o">=</span> <span class="p">{</span><span class="na">obj</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Object</span><span class="dl">'</span><span class="p">};</span>
+<span class="kd">let</span> <span class="nx">f</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{};</span>
+
+<span class="kd">let</span> <span class="nx">a</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">];</span>
+<span class="kd">let</span> <span class="nx">r</span> <span class="o">=</span> <span class="sr">/.*/gi</span><span class="p">;</span></code></pre></figure>
+
+<p>那么在Js里面是不是就没有结构了？当然不是，在Js中有且仅有一个结构，那就是function，所以说function既是值也是结构，所以在Js中结构也可以被当做参数，返回值，赋值给其他变量。正是因为Js这一神奇的特性，才会让这门语言产生很多灵活的、强大的特性。</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// structure is a value</span>
+<span class="kd">let</span> <span class="nx">f</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">i am a structure</span><span class="dl">'</span><span class="p">);</span>
+<span class="p">};</span>
+
+<span class="kd">let</span> <span class="nx">o</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">name</span><span class="p">:</span> <span class="dl">'</span><span class="s1">boyce</span><span class="dl">'</span><span class="p">,</span>
+    <span class="c1">// structure is a object field</span>
+    <span class="na">say</span><span class="p">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">cosole</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="c1">// structure is a structure</span>
+<span class="kd">function</span> <span class="nx">count</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="c1">// structure is a returned value</span>
+    <span class="k">return</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">i</span><span class="o">++</span><span class="p">;</span>
+    <span class="p">};</span>
+<span class="p">}</span></code></pre></figure>
+
+<h4 id="二除了undefined和null之外所有的值都是由function构造的">二、除了undefined和null之外，所有的值都是由function构造的</h4>
+<p>在Js里面，由语言本身定义的7种基本类型的值：</p>
+
+<blockquote>
+  <p>number、string、boolean、object、function、undefined和null（由于undefined和null比较特殊，以下所说的基本类型默认不包括这俩货）。</p>
+</blockquote>
+
+<p>基本类型可以理解为值的基本单元，其他的一切类型的值都是而且只能是由基本类型组成的。Js也有很多内置的对象，注意内置和基本是不一样的。</p>
+
+<p><strong>所有的值都是由function构建，包括基本类型。</strong></p>
+
+<p>每一个基本类型的值，都是由function构建，只是语言本身提供了字面量的写法。推荐用字面量写法。</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// number type function</span>
+<span class="kd">function</span> <span class="nb">Number</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{}</span>
+<span class="kd">let</span> <span class="nx">n</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Number</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>   <span class="kd">let</span> <span class="nx">n</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> 
+
+<span class="c1">// string type function</span>
+<span class="kd">function</span> <span class="nb">String</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{}</span>
+<span class="kd">let</span> <span class="nx">s</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">String</span><span class="p">(</span><span class="dl">'</span><span class="s1">String</span><span class="dl">'</span><span class="p">);</span>  <span class="kd">let</span> <span class="nx">s</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">String</span><span class="dl">"</span><span class="p">;</span> 
+
+<span class="c1">// boolean type function</span>
+<span class="kd">function</span> <span class="nb">Boolean</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{}</span>
+<span class="kd">let</span> <span class="nx">b</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Boolean</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>   <span class="kd">let</span> <span class="nx">b</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span> 
+
+<span class="c1">// object type function</span>
+<span class="kd">function</span> <span class="nb">Object</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{}</span>
+<span class="kd">let</span> <span class="nx">o</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Object</span><span class="p">({});</span>   <span class="kd">let</span> <span class="nx">o</span> <span class="o">=</span> <span class="p">{};</span> 
+
+<span class="c1">// function type function</span>
+<span class="kd">function</span> <span class="nb">Function</span><span class="p">()</span> <span class="p">{}</span>
+<span class="kd">let</span> <span class="nx">f</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Function</span><span class="p">(</span><span class="dl">'</span><span class="s1">a</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">b</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">return a + b</span><span class="dl">'</span><span class="p">);</span> 
+<span class="kd">let</span> <span class="nx">f</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">a</span> <span class="o">+</span> <span class="nx">b</span><span class="p">;</span>
+<span class="p">};</span></code></pre></figure>
+
+<p>除了以上的基本类型之外，不管是内置的还是自定义的对象，值都是由function构建的：</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// 内置对象</span>
+<span class="kd">let</span> <span class="nx">map</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Map</span><span class="p">();</span>
+
+<span class="c1">// 自定义对象</span>
+<span class="kd">function</span> <span class="nx">F</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">boyce</span><span class="dl">'</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kd">let</span> <span class="nx">o</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">F</span><span class="p">();</span></code></pre></figure>
+
+<p>那么在Js中既然没有Class的概念，那么new是什么意思呢，new其实就是调用这个方法并返回一个object，比普通的调用多做了一些事情。</p>
+
+<h4 id="三new的方式调用function和直接调用的区别">三、new的方式调用function和直接调用的区别</h4>
+<p>任何的function都可以通过new的方式调用，也可以直接调用，先看直接调用的方式：</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">F</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">i be executed.</span><span class="dl">'</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">boyce</span><span class="dl">'</span><span class="p">;</span>
+    <span class="k">return</span> <span class="dl">'</span><span class="s1">boyce</span><span class="dl">'</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kd">let</span> <span class="nx">r</span> <span class="o">=</span> <span class="nx">F</span><span class="p">();</span> <span class="c1">// i be executed. r is boyce. </span></code></pre></figure>
+
+<p>以上是直接调用的方式，只是如果在node里面，这段代码会报错，因为this是undefined，不过在浏览器里面，代码会正常运行，this是window对象，所以执行完了之后 window.name === ‘boyce’. 直接调用的方式比较简单，不在累述。</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">F</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">i be executed.</span><span class="dl">'</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">boyce</span><span class="dl">'</span><span class="p">;</span>
+    <span class="k">return</span> <span class="dl">'</span><span class="s1">boyce</span><span class="dl">'</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kd">let</span> <span class="nx">r</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">F</span><span class="p">();</span> <span class="c1">// i be executed. r is a object.  r.name === 'boyce'</span></code></pre></figure>
+
+<p>我们发现new方式修改了function本身的返回值，返回了一个object，且把name这个属性以及值赋值给了这个object。以上我们大概知道了new方式调用一个function所做的事情：</p>
+<ol>
+  <li>创建一个object，并且把this指向该object。</li>
+  <li>将该object返回。</li>
+  <li>当然还有一些prototype的处理逻辑不在本章讨论范围。
+简单来说，大约做了这样的事情(原型暂不考虑)：</li>
+</ol>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// fun 就是声明的函数 F</span>
+<span class="kd">function</span> <span class="nx">_new</span><span class="p">(</span><span class="nx">f</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">o</span> <span class="o">=</span> <span class="p">{};</span>
+    <span class="kd">let</span> <span class="nx">args</span> <span class="o">=</span> <span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">slice</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+
+    <span class="c1">// execute the function,  o is 'this'</span>
+    <span class="nx">f</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nx">o</span><span class="p">;</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>那么问题来了，既然如此，为什么Js里面所有值都需要由function产生呢？为什么所有的值都需要用new的方式调用一个function，然后返回一个对象？为什么不直接通过Js的字面量的方式直接创建对象呢？</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">F</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">boyce</span><span class="dl">'</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kd">let</span> <span class="nx">o1</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">F</span><span class="p">();</span>
+<span class="kd">let</span> <span class="nx">o2</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">name</span><span class="p">:</span> <span class="dl">'</span><span class="s1">boyce</span><span class="dl">'</span><span class="p">;</span>
+<span class="p">};</span></code></pre></figure>
+
+<p>这个问题就涉及到另一个在Js里面比较难理解的话题：<a href="javascript/2016/09/07/javascript_prototype/">原型与继承</a>。</p>
+
+:ET

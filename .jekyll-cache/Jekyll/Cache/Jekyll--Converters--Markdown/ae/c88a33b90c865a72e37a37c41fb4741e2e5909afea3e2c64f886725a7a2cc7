@@ -1,0 +1,102 @@
+I"?5<p><a href="/datamining/associationrule/2016/04/08/associationrule02/">上一节</a>我们给出了频繁项集的生成过程以及策略。简单的可以分为三个步骤：</p>
+<ol>
+  <li>由k-项集根据最小支持度过滤出k-频繁项集。</li>
+  <li>由k-频繁项集生成(k+1)-项集，可以称为候选项集。</li>
+  <li>然后重复第1步。</li>
+</ol>
+
+<p>这集主要讨论从k-候选集生成k-频繁项集的过程。</p>
+
+<p>从k-候选集生成k-频繁项集的过程其实很简单，就是计算该k-候选项集的支持度是否大于等于最小支持度minsup。
+所以，最重要的一件事情就是计算k-候选项集的支持度。  <br />
+sup = (X∪Y)∙count/n， 其中n是总的事务，(X∪Y)∙count是指所有的事务中包含(X∪Y)项集的数量。<br />
+首先定义项的对象，为了方便，所有的代码都用Groovy编写：</p>
+
+<figure class="highlight"><pre><code class="language-groovy" data-lang="groovy"><span class="kd">class</span> <span class="nc">Item</span> <span class="o">{</span>
+    <span class="kt">def</span> <span class="n">value</span>
+<span class="o">}</span></code></pre></figure>
+
+<p>然后定义事务对象，每个事务对象都可以简单的看成是一个项的集合：</p>
+
+<figure class="highlight"><pre><code class="language-groovy" data-lang="groovy"><span class="kd">class</span> <span class="nc">Transaction</span> <span class="o">{</span>
+    <span class="n">List</span><span class="o">&lt;</span><span class="n">Item</span><span class="o">&gt;</span> <span class="n">items</span>
+    <span class="n">String</span> <span class="n">name</span>
+<span class="o">}</span></code></pre></figure>
+
+<p>然后我们有一个事务集合，和若干候选项集，看看怎么以最简单的方式计算项集的支持度。</p>
+
+<figure class="highlight"><pre><code class="language-groovy" data-lang="groovy"><span class="c1">//创建Item</span>
+<span class="kd">final</span> <span class="n">Item</span> <span class="n">xgang</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Item</span><span class="o">(</span><span class="nl">value:</span> <span class="s2">"小刚"</span><span class="o">)</span>
+<span class="kd">final</span> <span class="n">Item</span> <span class="n">xhong</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Item</span><span class="o">(</span><span class="nl">value:</span> <span class="s2">"小红"</span><span class="o">)</span>
+<span class="kd">final</span> <span class="n">Item</span> <span class="n">xming</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Item</span><span class="o">(</span><span class="nl">value:</span> <span class="s2">"小明"</span><span class="o">)</span>
+<span class="kd">final</span> <span class="n">Item</span> <span class="n">xyang</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Item</span><span class="o">(</span><span class="nl">value:</span> <span class="s2">"小杨"</span><span class="o">)</span>
+<span class="kd">final</span> <span class="n">Item</span> <span class="n">xliu</span>  <span class="o">=</span> <span class="k">new</span> <span class="n">Item</span><span class="o">(</span><span class="nl">value:</span> <span class="s2">"小刘"</span><span class="o">)</span>
+<span class="kd">final</span> <span class="n">Item</span> <span class="n">xli</span>   <span class="o">=</span> <span class="k">new</span> <span class="n">Item</span><span class="o">(</span><span class="nl">value:</span> <span class="s2">"小李"</span><span class="o">)</span>
+
+<span class="c1">// 创建事务</span>
+<span class="n">Transaction</span> <span class="n">mon</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Transaction</span><span class="o">(</span><span class="nl">name:</span> <span class="s2">"周一"</span><span class="o">,</span> <span class="nl">items:</span> <span class="o">[</span><span class="n">xgang</span><span class="o">,</span> <span class="n">xhong</span><span class="o">])</span>
+<span class="n">Transaction</span> <span class="n">tue</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Transaction</span><span class="o">(</span><span class="nl">name:</span> <span class="s2">"周二"</span><span class="o">,</span> <span class="nl">items:</span> <span class="o">[</span><span class="n">xhong</span><span class="o">,</span> <span class="n">xming</span><span class="o">,</span> <span class="n">xyang</span><span class="o">,</span> <span class="n">xliu</span><span class="o">])</span>
+<span class="n">Transaction</span> <span class="n">wed</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Transaction</span><span class="o">(</span><span class="nl">name:</span> <span class="s2">"周三"</span><span class="o">,</span> <span class="nl">items:</span> <span class="o">[</span><span class="n">xgang</span><span class="o">,</span> <span class="n">xming</span><span class="o">,</span> <span class="n">xyang</span><span class="o">,</span> <span class="n">xli</span><span class="o">])</span>
+<span class="n">Transaction</span> <span class="n">thu</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Transaction</span><span class="o">(</span><span class="nl">name:</span> <span class="s2">"周四"</span><span class="o">,</span> <span class="nl">items:</span> <span class="o">[</span><span class="n">xhong</span><span class="o">,</span> <span class="n">xgang</span><span class="o">,</span> <span class="n">xming</span><span class="o">,</span> <span class="n">xyang</span><span class="o">])</span>
+<span class="n">Transaction</span> <span class="n">fri</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Transaction</span><span class="o">(</span><span class="nl">name:</span> <span class="s2">"周五"</span><span class="o">,</span> <span class="nl">items:</span> <span class="o">[</span><span class="n">xhong</span><span class="o">,</span> <span class="n">xgang</span><span class="o">,</span> <span class="n">xming</span><span class="o">,</span> <span class="n">xli</span><span class="o">])</span>
+
+<span class="c1">// 创建事务集合</span>
+<span class="n">List</span><span class="o">&lt;</span><span class="n">Transaction</span><span class="o">&gt;</span> <span class="n">transactions</span> <span class="o">=</span> <span class="o">[</span><span class="n">mon</span><span class="o">,</span> <span class="n">tue</span><span class="o">,</span> <span class="n">wed</span><span class="o">,</span> <span class="n">thu</span><span class="o">,</span> <span class="n">fri</span><span class="o">]</span></code></pre></figure>
+
+<p>那么，很容易得到事务的总数n</p>
+
+<figure class="highlight"><pre><code class="language-groovy" data-lang="groovy"><span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="n">transactions</span><span class="o">.</span><span class="na">size</span><span class="o">()</span></code></pre></figure>
+
+<p>假设有一个2-候选项集</p>
+
+<figure class="highlight"><pre><code class="language-groovy" data-lang="groovy"><span class="n">List</span><span class="o">&lt;</span><span class="n">Item</span><span class="o">&gt;</span> <span class="n">candidateItems</span> <span class="o">=</span> <span class="o">[</span><span class="n">xgang</span><span class="o">,</span> <span class="n">xming</span><span class="o">]</span></code></pre></figure>
+
+<p>我们要用最直接的方式计算其支持度</p>
+
+<figure class="highlight"><pre><code class="language-groovy" data-lang="groovy"><span class="kt">int</span> <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">transactions</span><span class="o">.</span><span class="na">each</span> <span class="o">{</span><span class="n">Transaction</span> <span class="n">transaction</span> <span class="o">-&gt;</span>
+    <span class="n">List</span><span class="o">&lt;</span><span class="n">Item</span><span class="o">&gt;</span> <span class="n">items</span> <span class="o">=</span> <span class="n">transaction</span><span class="o">.</span><span class="na">items</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">items</span><span class="o">.</span><span class="na">containsAll</span><span class="o">(</span><span class="n">candidateItems</span><span class="o">))</span> <span class="o">{</span>
+        <span class="n">count</span> <span class="o">++</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+<span class="kt">double</span> <span class="n">sup</span> <span class="o">=</span> <span class="o">(</span><span class="kt">double</span><span class="o">)</span><span class="n">count</span><span class="o">/</span><span class="n">n</span></code></pre></figure>
+
+<p>我们知道，Java API的List的containsAll(Collection c)的方法实现是遍历c的所有的元素，然后调用List的contains方法。我们假设每个事务的平均项集长度为m，总的事务数量为n，那么我们要判断一个k-候选项集是否为频繁项集的最坏时间复杂度为<strong>O(nmk)</strong>。</p>
+
+<p>实际上，在创建事务的时候，我们就知道每个Item属于哪些Transaction。假如我们在创建Transaction的时候保留
+该信息，那么后面计算支持度的方法就简单得多。</p>
+
+<p>我们在Item对象中保留该Item属于哪些Transaction</p>
+
+<figure class="highlight"><pre><code class="language-groovy" data-lang="groovy"><span class="kd">class</span> <span class="nc">Item</span> <span class="o">{</span>
+    <span class="kt">def</span> <span class="n">value</span>
+    <span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">transactionNames</span> <span class="o">=</span> <span class="o">[]</span>
+    <span class="kt">def</span> <span class="kt">void</span> <span class="nf">addTransactionName</span><span class="o">(</span><span class="n">String</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">transactionNames</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">name</span><span class="o">)</span>
+    <span class="o">}</span>
+<span class="o">}</span></code></pre></figure>
+
+<p>Transaction的构造方法如下</p>
+
+<figure class="highlight"><pre><code class="language-groovy" data-lang="groovy"><span class="n">Transaction</span><span class="o">(</span><span class="n">name</span><span class="o">,</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Item</span><span class="o">&gt;</span> <span class="n">items</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="n">name</span>
+    <span class="n">items</span><span class="o">.</span><span class="na">each</span> <span class="o">{</span><span class="n">Item</span> <span class="n">item</span> <span class="o">-&gt;</span>
+        <span class="n">item</span><span class="o">.</span><span class="na">addTransactionName</span><span class="o">(</span><span class="n">name</span><span class="o">)</span>
+    <span class="o">}</span>
+<span class="o">}</span> </code></pre></figure>
+
+<p>那么我们计算candidateItems=[xgang, xming]所属于的事务数量的方法就是求两个Item的transactionNames集合的交集的size。</p>
+
+<figure class="highlight"><pre><code class="language-groovy" data-lang="groovy"><span class="n">xgang</span><span class="o">.</span><span class="na">transactionNames</span><span class="o">.</span><span class="na">retainAll</span><span class="o">(</span><span class="n">xming</span><span class="o">.</span><span class="na">transactionNames</span><span class="o">)</span>
+<span class="kt">int</span> <span class="n">count</span> <span class="o">=</span> <span class="n">xgang</span><span class="o">.</span><span class="na">transactionNames</span><span class="o">.</span><span class="na">size</span><span class="o">()</span>
+<span class="kt">double</span> <span class="n">sup</span> <span class="o">=</span> <span class="o">(</span><span class="kt">double</span><span class="o">)</span><span class="n">count</span><span class="o">/</span><span class="n">n</span></code></pre></figure>
+
+<p>ArrayList API retainAll的最关键代码是</p>
+
+<figure class="highlight"><pre><code class="language-groovy" data-lang="groovy"><span class="k">for</span> <span class="o">(;</span> <span class="n">r</span> <span class="o">&lt;</span> <span class="n">size</span><span class="o">;</span> <span class="n">r</span><span class="o">++)</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">c</span><span class="o">.</span><span class="na">contains</span><span class="o">(</span><span class="n">elementData</span><span class="o">[</span><span class="n">r</span><span class="o">])</span> <span class="o">==</span> <span class="n">complement</span><span class="o">)</span>
+        <span class="n">elementData</span><span class="o">[</span><span class="n">w</span><span class="o">++]</span> <span class="o">=</span> <span class="n">elementData</span><span class="o">[</span><span class="n">r</span><span class="o">];</span></code></pre></figure>
+
+<p>所以retainAll的最坏情况是两个List没有交集，时间复杂度为O(n*n)，所以计算一个k-候选项集的支持度的最坏时间复杂度为<strong>O(n*n)</strong>，其中n是事务总数。</p>
+:ET
