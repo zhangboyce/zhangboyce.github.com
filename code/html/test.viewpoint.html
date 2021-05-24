@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lange="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=800, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0" />
+    <title>测试viewpoint</title>
+    <style type="text/css">
+        html {
+            width: 2000px;
+        }
+        .content {
+            width: 1010px;
+        }
+    </style>
+</head>
+<body>
+    <ul>
+        <li>
+            <div class="clientWidth">
+                <small>clientWidth: </small>
+                <strong id="clientWidth"></strong>
+                <small>px</small>
+            </div>
+        </li>
+        <li>
+            <div class="innerWidth">
+                <small>innerWidth: </small>
+                <strong id="innerWidth"></strong>
+                <small>px</small>
+            </div>
+        </li>
+        <li>
+            <div class="offsetWidth">
+                <small>offsetWidth: </small>
+                <strong id="offsetWidth"></strong>
+                <small>px</small>
+            </div>
+        </li>
+        <li>
+            <div class="pageXOffset">
+                <small>pageXOffset: </small>
+                <strong id="pageXOffset"></strong>
+                <small>px</small>
+            </div>
+        </li>
+        <li>
+            <div class="screenWidth">
+                <small>screenWidth: </small>
+                <strong id="screenWidth"></strong>
+                <small>px</small>
+            </div>
+        </li>
+        <li>
+            <div class="devicePixelRatio">
+                <small>devicePixelRatio: </small>
+                <strong id="devicePixelRatio"></strong>
+                <small>px</small>
+            </div>
+        </li>
+    </ul>
+    
+    <div class="content">    
+        Narrow screen devices (e.g. mobiles) render pages in a virtual window or viewport, which is usually wider than the screen, and then shrink the rendered result down so it can all be seen at once. Users can then pan and zoom to see different areas of the page. For example, if a mobile screen has a width of 640px, pages might be rendered with a virtual viewport of 980px, and then it will be shrunk down to fit into the 640px space.
+    </div>
+</body>
+</html>
+<script type="text/javascript">
+    (function(){
+        let layoutWidth = document.documentElement.clientWidth;
+        document.getElementById('clientWidth').innerText = layoutWidth;
+
+        let innerWidth = window.innerWidth;
+        document.getElementById('innerWidth').innerText = innerWidth;
+
+        let offsetWidth = document.documentElement.offsetWidth;
+        document.getElementById('offsetWidth').innerText = offsetWidth;
+
+        let screenWidth = screen.width;
+        document.getElementById('screenWidth').innerText = screenWidth;
+
+        let devicePixelRatio = window.devicePixelRatio;
+        document.getElementById('devicePixelRatio').innerText = devicePixelRatio;
+
+        function setPageXOffset() {
+            let pageXOffset = window.pageXOffset;
+            document.getElementById('pageXOffset').innerText = pageXOffset;
+        }
+        setPageXOffset();
+        document.addEventListener('scroll', function() {
+            setPageXOffset();
+        })
+
+    })();
+</script>

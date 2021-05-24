@@ -183,7 +183,7 @@ nav.menu-open {
 
 img {
   max-width: 100%;
-  display: block;
+  display: inline-block;
   margin: 0 auto;
   margin-bottom: 24px;
   -webkit-border-radius: 4px;
@@ -231,8 +231,25 @@ img[title="Emerald"] {
 
 /* Footer */
 footer {
+  position: fixed;
+  width: 100%;
+  bottom: 0;
   background-color: $main-color;
   color: $background-color;
   text-align: center;
   padding: 0.6667em 0;
+}
+
+#wrap {
+  padding-bottom: 50px;
+}
+
+.page-navigation {
+  margin-top: 50px;
+  display: flex;
+  justify-content: space-between;
+
+  a {
+    text-decoration: underline;
+  }
 }

@@ -1,0 +1,1 @@
+console.log('run test.async.2 now!');
